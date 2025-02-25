@@ -11,7 +11,37 @@ const App = () => {
 
   const boardref = useRef(null); // Reference to the board
 
-  const GetPieceUnicode = (piece) => {};
+  const GetPieceUnicode = (piece) => {
+    const unicodes = {
+      p: {
+        w: "♙", // White Pawn (U+2659)
+        b: "♟", // Black Pawn (U+265F)
+      },
+      n: {
+        w: "♘", // White Knight (U+2658)
+        b: "♞", // Black Knight (U+265E)
+      },
+      b: {
+        w: "♗", // White Bishop (U+2657)
+        b: "♝", // Black Bishop (U+265D)
+      },
+      r: {
+        w: "♖", // White Rook (U+2656)
+        b: "♜", // Black Rook (U+265C)
+      },
+      q: {
+        w: "♕", // White Queen (U+2655)
+        b: "♛", // Black Queen (U+265B)
+      },
+      k: {
+        w: "♔", // White King (U+2654)
+        b: "♚", // Black King (U+265A)
+      },
+    };
+
+    if (!piece) return "";
+    return unicodes[piece.type][piece.color];
+  };
 
   const renderBoard = () => {
     const boardelement = boardref.current; // Get the board element
@@ -64,7 +94,7 @@ const App = () => {
               e.preventDefault(); // Prevent the default behavior
             });
           });
-  
+
           pieceElement.addEventListener("dragend", () => {
             sourceSquare = null; //set the source square to null
             draggedPiece = null; //set the dragged piece to null
@@ -72,9 +102,6 @@ const App = () => {
 
           squareElement.appendChild(pieceElement); // Append the piece element to the square element
         }
-
-        
-
       });
     });
   };

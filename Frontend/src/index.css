@@ -35,10 +35,11 @@
     background-color: #b58863;
 }
 
-/* .piece {
+.piece {
     font-size: 36px;
     cursor: pointer;
-} */
+    user-select: none;
+}
 
 .piece.draggable {
     cursor: grab;
