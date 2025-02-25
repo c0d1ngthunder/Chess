@@ -27,8 +27,6 @@ app.get("/",(req,res)=>{
 })
 
 io.on("connection",(uniquesocket)=>{
-    console.log("connected")
-
     if (!players.white){
         players.white = uniquesocket.id
         uniquesocket.emit("playerRole","w")
