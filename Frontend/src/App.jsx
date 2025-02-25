@@ -105,7 +105,13 @@ const App = () => {
       });
     });
   };
-  const handleMove = (source, target) => {};
+  const handleMove = (source, target) => {
+    const move ={
+      from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
+      to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
+      promotion: "q"
+    }
+  };
 
   useEffect(() => {
     if (boardref.current) {
