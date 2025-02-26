@@ -45,21 +45,24 @@ io.on("connection",(uniquesocket)=>{
         })
 
         uniquesocket.on("move",(move)=>{
+            console.log(move)
             try{
                 if (chess.turn()==="w" && uniquesocket.id !== players.white) return
                 if (chess.turn()==="b" && uniquesocket.id !== players.black) return
                 
                 let response = chess.move(move)
+                console.log("Move result:", response)
                 if (response){
+                    currentplayer = chess.turn()
                     io.emit("move",move)
                     io.emit("boardState",chess.fen())
-                    if (chess.in_check()){
+                    if (chess.inCheck()){
                         io.emit("check",chess.turn())
                     }
-                    if (chess.in_checkmate()){
+                    if (chess.isCheckmate()){
                         io.emit("checkmate",chess.turn())
                     }
-                    if (chess.in_draw()){
+                    if (chess.isDraw()){
                         io.emit("draw")
                     }
                 }
