@@ -1,13 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { socket } from "./socket"; // Import socket.io-client
 import { Chess } from "chess.js"; // Import chess.js
 
 const App = () => {
-  let chess = new Chess(); // Create a new chess game
-
   let draggedPiece = null; // Variable to store the dragged piece
   let sourceSquare = null; // Variable to store the source square
   let playerRole = null; // Variable to store the player role
+  let [lostPlayer, setLostPlayer] = useState("");
+  let [causeofloss,setCauseofloss] = useState("");
+  const [chess, setChess] = useState(new Chess()); // State to store the chess game
 
   const boardref = useRef(null); // Reference to the board
 
@@ -48,8 +49,8 @@ const App = () => {
       const boardelement = boardref.current; // Get the board element
       const board = chess.board(); // Get the board from the chess game
 
-      if(playerRole==='b'){
-        boardelement.classList.add('flipped')
+      if (playerRole === "b") {
+        boardelement.classList.add("flipped");
       }
 
       boardref.current.innerHTML = ""; // Clear the board
@@ -159,10 +160,26 @@ const App = () => {
       renderBoard();
     });
 
-    socket.on("checkmate",(turn)=>{
-      console.log(turn)
-      alert("Checkmate",turn)
-    })
+    socket.on("checkmate", (turn) => {
+      console.log(turn);
+      // alert("Checkmate", turn);
+      setCauseofloss("Checkmate");
+      setLostPlayer(turn);
+      setChess(new Chess());
+    });
+
+    socket.on("Resign", (color) => {
+      setCauseofloss("Resignation");
+      setLostPlayer(color);
+      setChess(new Chess());
+    });
+    
+    socket.on("draw", () => {
+      setCauseofloss("Draw");
+      setLostPlayer("Both");
+      setChess(new Chess());
+    }
+    );
 
     return () => {
       socket.off("move");
@@ -175,6 +192,13 @@ const App = () => {
   return (
     <div className="w-full h-screen bg-zinc-900 flex justify-center items-center">
       <div ref={boardref} className="board h-112 w-112 bg-blue-400"></div>
+      {lostPlayer && (
+        <div className="absolute bg-white p-4 rounded-lg">
+          <h1 className="text-2xl text-black">
+            {lostPlayer === playerRole ? "You" : "Your Opponent"} {causeofloss === "Draw" ? "drew the game" : "won"} by {causeofloss}
+          </h1>
+        </div>
+      )}
     </div>
   );
 };
