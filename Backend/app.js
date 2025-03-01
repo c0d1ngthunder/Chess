@@ -41,9 +41,13 @@ io.on("connection", (uniquesocket) => {
     if (uniquesocket.id === players.white) {
       io.emit("Resign", "w");
       delete players.white;
+      chess.reset();
+      io.emit("boardState", chess.fen());
     } else if (uniquesocket.id === players.black) {
       io.emit("Resign", "b");
       delete players.black;
+      chess.reset();
+      io.emit("boardState", chess.fen());
     }
   });
 
@@ -57,20 +61,20 @@ io.on("connection", (uniquesocket) => {
         currentplayer = chess.turn();
         io.emit("move", move);
         io.emit("boardState", chess.fen());
+        if (chess.inCheck()) {
+          io.emit("check", chess.turn());
+        }
         if (chess.isGameOver()) {
-          if (chess.inCheck()) {
-            io.emit("check", chess.turn());
-          }
           if (chess.isCheckmate()) {
             io.emit("checkmate", chess.turn());
           }
           if (chess.isDraw()) {
             io.emit("draw");
+          }
+          chess.reset();
+          players = {}; // 🔥 Reset player slots
+          io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
         }
-        chess.reset();
-        players = {};  // 🔥 Reset player slots
-        io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
-      }
       } else {
         uniquesocket.emit("invalidMove");
       }
