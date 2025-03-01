@@ -35,12 +35,14 @@ io.on("connection", (uniquesocket) => {
     uniquesocket.emit("spectatorRole");
   }
 
+  uniquesocket.emit("boardState", chess.fen()); // Send latest board when someone connects
+
   uniquesocket.on("disconnect", () => {
     if (uniquesocket.id === players.white) {
-      io.emit("Resign", "b");
+      io.emit("Resign", "w");
       delete players.white;
     } else if (uniquesocket.id === players.black) {
-      io.emit("Resign", "w");
+      io.emit("Resign", "b");
       delete players.black;
     }
   });
@@ -64,12 +66,15 @@ io.on("connection", (uniquesocket) => {
           }
           if (chess.isDraw()) {
             io.emit("draw");
-        }}
+        }
+        chess.reset();
+        players = {};  // 🔥 Reset player slots
+        io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
+      }
       } else {
         uniquesocket.emit("invalidMove");
       }
     } catch (e) {
-      console.log(e);
       uniquesocket.emit("invalidMove", move);
     }
   });
