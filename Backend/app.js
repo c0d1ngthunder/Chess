@@ -41,11 +41,13 @@ io.on("connection", (uniquesocket) => {
     if (uniquesocket.id === players.white) {
       io.emit("Resign", "w");
       delete players.white;
+      delete players.black;
       chess.reset();
       io.emit("boardState", chess.fen());
     } else if (uniquesocket.id === players.black) {
       io.emit("Resign", "b");
       delete players.black;
+      delete players.white;
       chess.reset();
       io.emit("boardState", chess.fen());
     }

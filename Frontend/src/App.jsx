@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { socket } from "./socket"; // Import socket.io-client
 import { Chess } from "chess.js"; // Import chess.js
+import renderBoard from "./renderBoard";
+import Navbar from "./Navbar";
+import { BrowserRouter, Routes, Route } from "react-router";
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -10,6 +13,7 @@ const App = () => {
   let [lostPlayer, setLostPlayer] = useState("");
   let [causeofloss, setCauseofloss] = useState("");
   const chess = useRef(new Chess()).current; // State to store the chess game
+  let [showBtn, setShowBtn] = useState(true);
 
   const boardref = useRef(null); // Reference to the board
 
@@ -17,7 +21,6 @@ const App = () => {
     setLostPlayer("");
     setCauseofloss("");
   };
-
   const GetPieceUnicode = (piece) => {
     const unicodes = {
       p: {
@@ -49,142 +52,125 @@ const App = () => {
     if (!piece) return "";
     return unicodes[piece.type][piece.color];
   };
-  const renderBoard = () => {
-    console.log("Rendering board..."); // Debug log
-    const boardelement = boardref.current; // Get the board element
-    const board = chess.board(); // Get the board from the chess game
-
-    if (playerRole === "b") {
-      boardelement.classList.add("flipped");
-    }
-
-    boardref.current.innerHTML = ""; // Clear the board
-
-    board.forEach((row, rowidx) => {
-      row.forEach((square, squareidx) => {
-        const squareElement = document.createElement("div"); // Create a square element
-        squareElement.classList.add(
-          "square",
-          (rowidx + squareidx) % 2 === 0 ? "light" : "dark"
-        ); // Add classes to the square element
-        squareElement.dataset.row = rowidx; // Set the row index
-        squareElement.dataset.col = squareidx; // Set the column index
-
-        boardelement.appendChild(squareElement); // Append the square element to the board element
-
-        if (square) {
-          const pieceElement = document.createElement("div"); // Create a piece element
-          pieceElement.classList.add(
-            "piece",
-            square.color === "w" ? "white" : "black" // Add color class to the piece element
-          ); // Add class to the piece element
-
-          pieceElement.innerText = GetPieceUnicode(square); // Set the innerHTML of the piece element
-          pieceElement.draggable = playerRole === square.color; // Set the draggable attribute of the piece element
-          pieceElement.addEventListener("dragstart", (e) => {
-            console.log(
-              "Dragging piece:",
-              square.type,
-              "Color:",
-              square.color,
-              "Player Role:",
-              playerRole
-            ); // <-- debug log
-            if (pieceElement.draggable) {
-              draggedPiece = pieceElement;
-              sourceSquare = { row: rowidx, col: squareidx };
-              e.dataTransfer.setData("text/plain", ""); // Set the data to be transferred
-            }
-          });
-
-          pieceElement.addEventListener("dragend", () => {
-            sourceSquare = null; //set the source square to null
-            draggedPiece = null; //set the dragged piece to null
-          });
-
-          squareElement.appendChild(pieceElement); // Append the piece element to the square element
-        }
-
-        squareElement.addEventListener("dragover", (e) => {
-          // Add event listener to the square element
-          e.preventDefault(); // Prevent the default behavior
-        });
-
-        squareElement.addEventListener("drop", (e) => {
-          console.log("dropped", e, draggedPiece);
-
-          e.preventDefault(); // Prevent the default behavior
-          if (draggedPiece) {
-            const targetSquare = {
-              row: parseInt(squareElement.dataset.row),
-              col: parseInt(squareElement.dataset.col),
-            }; // Get the target square
-
-            handleMove(sourceSquare, targetSquare); // Handle the move
-          }
-        });
-      });
-    });
-  };
   const handleMove = (source, target) => {
     const move = {
       from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
 
-    // const piece = chess.get(move.from);
-    // if (
-    //   piece &&
-    //   piece.type === "p" &&
-    //   (move.to[1] === "8" || move.to[1] === "1")
-    // ) {
-    //   move.promotion = "q"; // Promote pawn to Queen
-    // }
-    console.log("Current FEN before move:", chess.fen()); // Debugging line
-    console.log("Attempting to emit move:", move); // <-- debug log
     const result = chess.move(move); // Attempt to move the piece
     if (result) {
+      let audio1 = new Audio("./media/move-self.mp3");
+      audio1.play();
       socket.emit("move", move);
     } else {
-      console.log(result);
+      let audio1 = new Audio("./media/illegal.mp3");
+      audio1.play();
     }
+  };
+  const connectToServer = () => {
+    socket.connect();
   };
   useEffect(() => {
     socket.on("playerRole", (role) => {
+      setTimeout(() => {
+        let audio1 = new Audio("./media/game-start.mp3");
+        audio1.play();
+      }, 100);
       setPlayerRole(role);
-      renderBoard();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
     });
 
     socket.on("spectatorRole", () => {
       setPlayerRole(role);
-      renderBoard();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
     });
 
     socket.on("boardState", (fen) => {
       chess.load(fen); // Load the board state
-      renderBoard();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
     });
 
     socket.on("move", (move) => {
       chess.move(move);
-      renderBoard();
+      let audio1 = new Audio("./media/move-opponent.mp3");
+      audio1.play();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
+    });
+
+    socket.on("check", () => {
+      let audio1 = new Audio("./media/move-check.mp3");
+      audio1.play();
     });
 
     socket.on("checkmate", (turn) => {
-      console.log(turn);
       // alert("Checkmate", turn);
+      let audio1 = new Audio("./media/game-end.mp3");
+      audio1.play();
+      if (turn === playerRole) {
+        let audio2 = new Audio("./media/game-lose-long.mp3");
+        audio2.play();
+      } else {
+        let audio2 = new Audio("./media/game-win-long.mp3");
+        audio2.play();
+      }
       setCauseofloss("Checkmate");
       setLostPlayer(turn);
       chess.reset();
     });
 
     socket.on("Resign", (color) => {
+      let audio1 = new Audio("./media/game-end.mp3");
+      audio1.play();
+      if (color === playerRole) {
+        let audio2 = new Audio("./media/game-lose-long.mp3");
+        audio2.play();
+      } else {
+        let audio2 = new Audio("./media/game-win-long.mp3");
+        audio2.play();
+      }
       setCauseofloss("Resignation");
       setLostPlayer(color);
       chess.reset();
     });
 
     socket.on("draw", () => {
+      let audio1 = new Audio("./media/game-end.mp3");
+      audio1.play();
+      let audio2 = new Audio("./media/game-draw.mp3");
+      audio2.play();
       setCauseofloss("Draw");
       setLostPlayer("Both");
       chess.reset();
@@ -200,20 +186,45 @@ const App = () => {
 
   useEffect(() => {
     if (playerRole !== null) {
-      renderBoard();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
     }
   }, [playerRole]);
 
   return (
-    <div className="w-full h-screen bg-zinc-900 flex justify-center items-center">
-      <div ref={boardref} className="board h-112 w-112 bg-blue-400"></div>
+    <div className="w-full h-screen bg-zinc-900 flex flex-col justify-center items-center">
+      <Navbar />
+      {showBtn && (
+        <button
+          onClick={() => {
+            setShowBtn(false);
+            connectToServer();
+          }}
+          className="text-md p-4 bg-blue-400 text-white rounded-md absolute top-[50%] left-[50%]"
+        >
+          Play
+        </button>
+      )}
+      <div ref={boardref} className="board h-112 w-112"></div>
       {lostPlayer && (
         <div className="absolute bg-white h-60 p-4 rounded-lg">
           <h1 className="text-2xl text-black">
             {lostPlayer === playerRole ? "Opponent" : "You"}{" "}
             {causeofloss === "Draw" ? "drew the game" : "won"} by {causeofloss}
           </h1>
-          <button className="text-lg bg-green-400 p-2 rounded-md left-[30%] mt-4 absolute" onClick={() => reset()}>Play again</button>
+          <button
+            className="text-lg bg-green-400 p-2 rounded-md left-[30%] mt-4 absolute"
+            onClick={() => reset()}
+          >
+            Play again
+          </button>
         </div>
       )}
     </div>
