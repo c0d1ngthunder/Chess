@@ -6,8 +6,7 @@ This project is a web-based chess game. The game allows two players to compete a
 ## Features
 - Interactive chessboard with drag-and-drop functionality
 - Real-time move validation
-- Highlighting of possible moves
-- Basic AI opponent (optional)
+- Real-time connectivity
 
 ## Technologies Used
 - **Node.js**: Fast and efficient server-side runtime for building scalable applications.
@@ -15,16 +14,8 @@ This project is a web-based chess game. The game allows two players to compete a
 - **Socket.io**: Enables real-time bidirectional communication for instant game moves and updates.
 - **React**: Provides efficient UI rendering and state management for a responsive chess interface.
 
-## Installation
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/chess-game.git
-    ```
-2. Navigate to the project directory:
-    ```bash
-    cd chess-game
-    ```
-3. Open `index.html` in your web browser to start the game.
+## Play
+1. Visit the [site](https://chess-frontend-dk5t.onrender.com/) to play
 
 ## Usage
 - Drag and drop pieces to make a move.
@@ -35,7 +26,7 @@ This project is a web-based chess game. The game allows two players to compete a
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the MIT [License](LICENSE).
 
 ## Contact
 For any questions or feedback, please contact [your email address].
