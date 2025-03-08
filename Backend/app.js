@@ -67,7 +67,6 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (uniquesocket) => {
-
   if (!players.white) {
     players.white = uniquesocket.id;
     uniquesocket.emit("playerRole", "w");
@@ -78,8 +77,10 @@ io.on("connection", (uniquesocket) => {
     uniquesocket.emit("spectatorRole");
   }
 
-  if (players.white && players.black){
-    io.emit("connected")
+  if (players.white && players.black) {
+    io.emit("connected");
+  }else{
+    uniquesocket.emit("connecting");
   }
 
   uniquesocket.emit("boardState", chess.fen()); // Send latest board when someone connects
@@ -90,12 +91,14 @@ io.on("connection", (uniquesocket) => {
       delete players.black;
       chess.reset();
       io.emit("Resign", "w");
+      io.emit("connecting");
       io.emit("boardState", chess.fen());
     } else if (uniquesocket.id === players.black) {
-      io.emit("Resign", "b");
       delete players.black;
       delete players.white;
       chess.reset();
+      io.emit("Resign", "b");
+      io.emit("connecting");
       io.emit("boardState", chess.fen());
     }
   });

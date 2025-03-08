@@ -12,6 +12,7 @@ const App = () => {
   const [playerRole, setPlayerRole] = useState(null); // Variable to store the player role
   let [lostPlayer, setLostPlayer] = useState("");
   let [causeofloss, setCauseofloss] = useState("");
+  const [visible, setVisible] = useState(true);
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState();
@@ -21,7 +22,7 @@ const App = () => {
   const reset = () => {
     setLostPlayer("");
     setCauseofloss("");
-    socket.connect()
+    socket.connect();
   };
   const GetPieceUnicode = (piece) => {
     const unicodes = {
@@ -73,9 +74,15 @@ const App = () => {
   const connectToServer = () => {
     socket.connect();
   };
+  const changevisible = () => {
+    setVisible(false);
+  };
   useEffect(() => {
     socket.on("connected", () => {
       setGame(true);
+      const timer = setTimeout(() => {
+        changevisible();
+      }, 3000);
     });
 
     socket.on("connecting", () => {
@@ -146,7 +153,7 @@ const App = () => {
     });
 
     socket.on("checkmate", (turn) => {
-      socket.disconnect()
+      socket.disconnect();
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       if (turn === playerRole) {
@@ -162,7 +169,7 @@ const App = () => {
     });
 
     socket.on("Resign", (color) => {
-      socket.disconnect()
+      socket.disconnect();
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       if (color === playerRole) {
@@ -178,7 +185,7 @@ const App = () => {
     });
 
     socket.on("draw", () => {
-      socket.disconnect()
+      socket.disconnect();
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       let audio2 = new Audio("./media/game-draw.mp3");
@@ -241,7 +248,11 @@ const App = () => {
       )}
       {!showBtn &&
         (game ? (
-          <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50 transition-all">Connected</div>
+          visible && (
+
+          <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50">
+            Connected
+          </div>)
         ) : (
           <div className="bg-white w-[20%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
             Connecting to another player
