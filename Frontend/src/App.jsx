@@ -14,18 +14,20 @@ const App = () => {
   let [causeofloss, setCauseofloss] = useState("");
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
+  const [game, setGame] = useState();
 
   const boardref = useRef(null); // Reference to the board
 
   const reset = () => {
     setLostPlayer("");
     setCauseofloss("");
+    socket.connect()
   };
   const GetPieceUnicode = (piece) => {
     const unicodes = {
       p: {
         w: "♙", // White Pawn (U+2659)
-        b: "♟", // Black Pawn (U+265F)
+        b: "♙", // Black Pawn (U+265F) ♟
       },
       n: {
         w: "♘", // White Knight (U+2658)
@@ -72,6 +74,14 @@ const App = () => {
     socket.connect();
   };
   useEffect(() => {
+    socket.on("connected", () => {
+      setGame(true);
+    });
+
+    socket.on("connecting", () => {
+      setGame(false);
+    });
+
     socket.on("playerRole", (role) => {
       setTimeout(() => {
         let audio1 = new Audio("./media/game-start.mp3");
@@ -136,7 +146,7 @@ const App = () => {
     });
 
     socket.on("checkmate", (turn) => {
-      // alert("Checkmate", turn);
+      socket.disconnect()
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       if (turn === playerRole) {
@@ -152,6 +162,7 @@ const App = () => {
     });
 
     socket.on("Resign", (color) => {
+      socket.disconnect()
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       if (color === playerRole) {
@@ -167,6 +178,7 @@ const App = () => {
     });
 
     socket.on("draw", () => {
+      socket.disconnect()
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       let audio2 = new Audio("./media/game-draw.mp3");
@@ -199,7 +211,7 @@ const App = () => {
   }, [playerRole]);
 
   return (
-    <div className="w-full h-screen bg-zinc-900 flex flex-col justify-center items-center">
+    <div className="w-full overflow-hidden h-screen bg-zinc-900 flex flex-col justify-center items-center">
       <Navbar />
       {showBtn && (
         <button
@@ -227,6 +239,14 @@ const App = () => {
           </button>
         </div>
       )}
+      {!showBtn &&
+        (game ? (
+          <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50 transition-all">Connected</div>
+        ) : (
+          <div className="bg-white w-[20%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
+            Connecting to another player
+          </div>
+        ))}
     </div>
   );
 };
