@@ -139,11 +139,13 @@ const App = () => {
 
     socket.on("move", (move) => {
       let move1 = chess.move(move);
-      if (move1.isCapture()){
-        
+      if (move1.isCapture()) {
+        let audio1 = new Audio("./media/capture.mp3");
+        audio1.play();
+      } else {
+        let audio1 = new Audio("./media/move-opponent.mp3");
+        audio1.play();
       }
-      let audio1 = new Audio("./media/move-opponent.mp3");
-      audio1.play();
       renderBoard(
         boardref,
         chess,
