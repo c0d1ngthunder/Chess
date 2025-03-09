@@ -18,48 +18,6 @@ const chess = new Chess();
 let players = {};
 let currentplayer = "w";
 
-class ChessClock {
-  constructor(initialTime, displayElement) {
-    this.time = initialTime; // Time in seconds
-    this.displayElement = displayElement;
-    this.interval = null;
-    this.updateDisplay();
-  }
-
-  start() {
-    if (!this.interval) {
-      this.interval = setInterval(() => {
-        if (this.time > 0) {
-          this.time--;
-          this.updateDisplay();
-        } else {
-          this.stop();
-          alert("Time's up!");
-        }
-      }, 1000);
-    }
-  }
-
-  stop() {
-    clearInterval(this.interval);
-    this.interval = null;
-  }
-
-  reset(newTime) {
-    this.stop();
-    this.time = newTime;
-    this.updateDisplay();
-  }
-
-  updateDisplay() {
-    const minutes = Math.floor(this.time / 60);
-    const seconds = this.time % 60;
-    this.displayElement.textContent = `${minutes}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
-  }
-}
-
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
@@ -79,7 +37,7 @@ io.on("connection", (uniquesocket) => {
 
   if (players.white && players.black) {
     io.emit("connected");
-  }else{
+  } else {
     uniquesocket.emit("connecting");
   }
 
@@ -112,21 +70,26 @@ io.on("connection", (uniquesocket) => {
         let response = chess.move(move);
         if (response) {
           currentplayer = chess.turn();
-          io.emit("move", move);
-          io.emit("boardState", chess.fen());
           if (chess.inCheck()) {
-            io.emit("check", chess.turn());
-          }
-          if (chess.isGameOver()) {
+            io.emit("check", move);
+            io.emit("boardState", chess.fen());
+          } else if (chess.isGameOver()) {
             if (chess.isCheckmate()) {
+              io.emit("move", move);
+              io.emit("boardState", chess.fen());
               io.emit("checkmate", chess.turn());
             }
             if (chess.isDraw()) {
+              io.emit("move", move);
+              io.emit("boardState", chess.fen());
               io.emit("draw");
             }
             chess.reset();
             players = {}; // 🔥 Reset player slots
             io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
+          } else {
+            io.emit("move", move);
+            io.emit("boardState", chess.fen());
           }
         } else {
           uniquesocket.emit("invalidMove");

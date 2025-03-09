@@ -7,7 +7,6 @@ const renderBoard = (
   sourceSquare,
   handleMove
 ) => {
-  console.log("Rendering board..."); // Debug log
   const boardelement = boardref.current; // Get the board element
   const board = chess.board(); // Get the board from the chess game
 
@@ -39,14 +38,6 @@ const renderBoard = (
         pieceElement.innerText = GetPieceUnicode(square); // Set the innerHTML of the piece element
         pieceElement.draggable = playerRole === square.color; // Set the draggable attribute of the piece element
         pieceElement.addEventListener("dragstart", (e) => {
-          console.log(
-            "Dragging piece:",
-            square.type,
-            "Color:",
-            square.color,
-            "Player Role:",
-            playerRole
-          ); // <-- debug log
           if (pieceElement.draggable) {
             draggedPiece = pieceElement;
             sourceSquare = { row: rowidx, col: squareidx };
@@ -68,7 +59,6 @@ const renderBoard = (
       });
 
       squareElement.addEventListener("drop", (e) => {
-        console.log("dropped", e, draggedPiece);
 
         e.preventDefault(); // Prevent the default behavior
         if (draggedPiece) {

@@ -61,12 +61,17 @@ const App = () => {
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
 
-    const result = chess.move(move); // Attempt to move the piece
-    if (result) {
-      let audio1 = new Audio("./media/move-self.mp3");
-      audio1.play();
-      socket.emit("move", move);
-    } else {
+    try {
+      let result = chess.move(move); // Attempt to move the piece
+      if (result) {
+        let audio1 = new Audio("./media/move-self.mp3");
+        audio1.play();
+        socket.emit("move", move);
+      } else {
+        let audio1 = new Audio("./media/illegal.mp3");
+        audio1.play();
+      }
+    } catch {
       let audio1 = new Audio("./media/illegal.mp3");
       audio1.play();
     }
@@ -133,7 +138,10 @@ const App = () => {
     });
 
     socket.on("move", (move) => {
-      chess.move(move);
+      let move1 = chess.move(move);
+      if (move1.isCapture()){
+        
+      }
       let audio1 = new Audio("./media/move-opponent.mp3");
       audio1.play();
       renderBoard(
@@ -249,10 +257,10 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-
-          <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50">
-            Connected
-          </div>)
+            <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50">
+              Connected
+            </div>
+          )
         ) : (
           <div className="bg-white w-[20%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
             Connecting to another player
