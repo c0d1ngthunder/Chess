@@ -16,6 +16,7 @@ const App = () => {
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState();
+  const [hover,setHover] = useState(false)
 
   const boardref = useRef(null); // Reference to the board
 
@@ -228,7 +229,7 @@ const App = () => {
   }, [playerRole]);
 
   return (
-    <div className="w-full overflow-hidden h-screen bg-zinc-900 flex flex-col justify-center items-center">
+    <div className="w-full overflow-hidden h-screen bg-[#0a0a0a] flex flex-col justify-center items-center">
       <Navbar />
       {showBtn && (
         <button
@@ -236,7 +237,9 @@ const App = () => {
             setShowBtn(false);
             connectToServer();
           }}
-          className="text-md p-4 bg-blue-400 text-white rounded-md absolute top-[50%] left-[50%]"
+          onMouseEnter={()=>setHover(true)}
+          onMouseLeave={()=>setHover(false)}
+          className={`text-md p-4 px-8 bg-transparent transition duration-200 ease border-1 ${hover ? "bg-white text-black" : "bg-transparent text-white" } absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[50%]`}
         >
           Play
         </button>
