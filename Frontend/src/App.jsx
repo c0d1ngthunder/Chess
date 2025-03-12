@@ -88,6 +88,15 @@ const App = () => {
       setGame(true);
       let audio1 = new Audio("./media/game-start.mp3");
       audio1.play();
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
       const timer = setTimeout(() => {
         changevisible();
       }, 3000);
@@ -99,15 +108,6 @@ const App = () => {
 
     socket.on("playerRole", (role) => {
       setPlayerRole(role);
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
     });
 
     socket.on("spectatorRole", () => {
@@ -191,17 +191,6 @@ const App = () => {
       setCauseofloss("Resignation");
       setLostPlayer(color);
       chess.reset();
-      if (playerRole !== null) {
-        renderBoard(
-          boardref,
-          chess,
-          playerRole,
-          GetPieceUnicode,
-          draggedPiece,
-          sourceSquare,
-          handleMove
-        );
-      }
     });
 
     socket.on("draw", () => {
@@ -224,32 +213,35 @@ const App = () => {
   }, [playerRole]);
 
   useEffect(() => {
-    if (playerRole !== null) {
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
-    }
+      if (playerRole !== null) {
+        renderBoard(
+          boardref,
+          chess,
+          playerRole,
+          GetPieceUnicode,
+          draggedPiece,
+          sourceSquare,
+          handleMove
+        );
+      }
   }, [playerRole]);
 
   return (
-    <div className="w-full overflow-hidden h-screen bg-[#0a0a0a] flex flex-col justify-center items-center">
+    <div className="w-full overflow-hidden h-screen bg-[#0a0a0a] flex flex-col items-center">
       <Navbar />
       {showBtn && (
         <button
           onClick={() => {
-            setShowBtn(false);
             connectToServer();
+            setShowBtn(false);
+            setHover(false);
           }}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
-          className={`text-md p-4 px-8 bg-transparent transition duration-200 ease border-1 ${
-            hover ? "bg-white border-white text-black" : "bg-transparent text-white"
+          className={`text-md cursor-pointer p-4 px-8 bg-transparent transition duration-200 ease border-1 ${
+            hover
+              ? "bg-white border-white text-black"
+              : "bg-transparent text-white"
           } absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[50%]`}
         >
           Play
@@ -257,14 +249,26 @@ const App = () => {
       )}
       <div ref={boardref} className="board h-112 w-112"></div>
       {lostPlayer && (
-        <div className="absolute bg-white h-60 p-4 rounded-lg">
-          <h1 className="text-2xl text-black">
+        <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-90 bg-[#111111] text-white h-60 px-4">
+          <button
+            onClick={() => setLostPlayer(null)}
+            className="cursor-pointer absolute right-2 text-xl "
+          >
+            X
+          </button>
+          <h1 className="text-2xl py-10 pl-10">
             {lostPlayer === playerRole ? "Opponent" : "You"}{" "}
             {causeofloss === "Draw" ? "drew the game" : "won"} by {causeofloss}
           </h1>
           <button
-            className="text-lg bg-green-400 p-2 rounded-md left-[30%] mt-4 absolute"
+            className={`text-lg cursor-pointer bg-transparent ${
+              hover
+                ? "bg-white border-white text-black"
+                : "bg-transparent text-white"
+            } duration-200 transition-all border-1 p-3 left-[30%] mt-4 absolute`}
             onClick={() => reset()}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
           >
             Play again
           </button>
@@ -278,8 +282,8 @@ const App = () => {
             </div>
           )
         ) : (
-          <div className="bg-white w-[20%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
-            Connecting to another player
+          <div className="bg-[#111111] text-white w-[25%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
+            Waiting for another player to join...
           </div>
         ))}
     </div>
