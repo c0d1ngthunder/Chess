@@ -16,7 +16,7 @@ const App = () => {
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState();
-  const [hover,setHover] = useState(false)
+  const [hover, setHover] = useState(false);
 
   const boardref = useRef(null); // Reference to the board
 
@@ -86,6 +86,8 @@ const App = () => {
   useEffect(() => {
     socket.on("connected", () => {
       setGame(true);
+      let audio1 = new Audio("./media/game-start.mp3");
+      audio1.play();
       const timer = setTimeout(() => {
         changevisible();
       }, 3000);
@@ -96,10 +98,6 @@ const App = () => {
     });
 
     socket.on("playerRole", (role) => {
-      setTimeout(() => {
-        let audio1 = new Audio("./media/game-start.mp3");
-        audio1.play();
-      }, 100);
       setPlayerRole(role);
       renderBoard(
         boardref,
@@ -193,6 +191,17 @@ const App = () => {
       setCauseofloss("Resignation");
       setLostPlayer(color);
       chess.reset();
+      if (playerRole !== null) {
+        renderBoard(
+          boardref,
+          chess,
+          playerRole,
+          GetPieceUnicode,
+          draggedPiece,
+          sourceSquare,
+          handleMove
+        );
+      }
     });
 
     socket.on("draw", () => {
@@ -237,9 +246,11 @@ const App = () => {
             setShowBtn(false);
             connectToServer();
           }}
-          onMouseEnter={()=>setHover(true)}
-          onMouseLeave={()=>setHover(false)}
-          className={`text-md p-4 px-8 bg-transparent transition duration-200 ease border-1 ${hover ? "bg-white text-black" : "bg-transparent text-white" } absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[50%]`}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className={`text-md p-4 px-8 bg-transparent transition duration-200 ease border-1 ${
+            hover ? "bg-white border-white text-black" : "bg-transparent text-white"
+          } absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[50%]`}
         >
           Play
         </button>

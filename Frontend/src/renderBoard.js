@@ -12,6 +12,8 @@ const renderBoard = (
 
   if (playerRole === "b") {
     boardelement.classList.add("flipped");
+  }if (playerRole === "w"){
+    boardelement.classList.remove("flipped")
   }
 
   boardref.current.innerHTML = ""; // Clear the board
