@@ -247,7 +247,7 @@ const App = () => {
           Play
         </button>
       )}
-      <div ref={boardref} className="board h-112 w-112"></div>
+      <div ref={boardref} className="board sm:h-100 sm:w-100 h-80 w-80"></div>
       {lostPlayer && (
         <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-90 bg-[#111111] text-white h-60 px-4">
           <button
@@ -282,7 +282,7 @@ const App = () => {
             </div>
           )
         ) : (
-          <div className="bg-[#111111] text-white w-[25%] h-[60%] p-8 -translate-y-[30%] absolute top-[50%]">
+          <div className="bg-[#111111] text-white h-[30%] sm:h-[50%] sm:top-[50%] sm:-translate-y-[50%] p-8 -translate-y-[50%] absolute left-[50%] -translate-x-[50%] top-[30%] ">
             Waiting for another player to join...
           </div>
         ))}

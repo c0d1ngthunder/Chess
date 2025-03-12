@@ -34,6 +34,8 @@ const renderBoard = (
         const pieceElement = document.createElement("div"); // Create a piece element
         pieceElement.classList.add(
           "piece",
+          "text-2xl",
+          "sm:text-4xl",
           square.color === "w" ? "white" : "black" // Add color class to the piece element
         ); // Add class to the piece element
 
