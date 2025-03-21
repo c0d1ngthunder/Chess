@@ -53,6 +53,28 @@
     transform: rotate(180deg);
 }
 
+.history::-webkit-scrollbar {
+    height: 3px;
+}
+
+.history:hover::-webkit-scrollbar {
+    height: 6px;
+    transition: height 5s;
+}
+
+.history::-webkit-scrollbar-thumb {
+    background: #666; /* Scrollbar color */
+    border-radius: 10px;
+}
+.history::-webkit-scrollbar-track {
+    background: transparent; /* Hide track */
+}
+
+/* 
+.history{
+    scrollbar-width: thin;
+} */
+
 @keyframes decrease {
     0% {
       width: 100%;

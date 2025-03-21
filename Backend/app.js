@@ -41,7 +41,7 @@ io.on("connection", (uniquesocket) => {
     uniquesocket.emit("connecting");
   }
 
-  uniquesocket.emit("boardState", chess.fen()); // Send latest board when someone connects
+  uniquesocket.emit("boardState", chess.fen(),chess.history()); // Send latest board when someone connects
 
   uniquesocket.on("disconnect", () => {
     if (uniquesocket.id === players.white) {
@@ -50,14 +50,14 @@ io.on("connection", (uniquesocket) => {
       chess.reset();
       io.emit("Resign", "w");
       io.emit("connecting");
-      io.emit("boardState", chess.fen());
+      io.emit("boardState", chess.fen(),chess.history());
     } else if (uniquesocket.id === players.black) {
       delete players.black;
       delete players.white;
       chess.reset();
       io.emit("Resign", "b");
       io.emit("connecting");
-      io.emit("boardState", chess.fen());
+      io.emit("boardState", chess.fen(),chess.history());
     }
   });
 
@@ -74,23 +74,23 @@ io.on("connection", (uniquesocket) => {
           if (chess.isGameOver()) {
             if (chess.isCheckmate()) {
               io.emit("move", move);
-              io.emit("boardState", chess.fen());
+              io.emit("boardState", chess.fen(),chess.history());
               io.emit("checkmate", chess.turn());
             }
             if (chess.isDraw()) {
               io.emit("move", move);
-              io.emit("boardState", chess.fen());
+              io.emit("boardState", chess.fen(),chess.history());
               io.emit("draw");
             }
             chess.reset();
             players = {}; // 🔥 Reset player slots
-            io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
+            io.emit("boardState", chess.fen(),chess.history()); // 🔥 Send updated board after reset
           }else if (chess.inCheck()) {
             io.emit("check", move);
-            io.emit("boardState", chess.fen());
+            io.emit("boardState", chess.fen(),chess.history());
           } else {
             io.emit("move", move);
-            io.emit("boardState", chess.fen());
+            io.emit("boardState", chess.fen(),chess.history());
           }
         } else {
           uniquesocket.emit("invalidMove");

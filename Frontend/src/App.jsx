@@ -17,6 +17,7 @@ const App = () => {
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState();
   const [hover, setHover] = useState(false);
+  const [history,setHistory] = useState()
 
   const boardref = useRef(null); // Reference to the board
 
@@ -124,8 +125,9 @@ const App = () => {
       );
     });
 
-    socket.on("boardState", (fen) => {
+    socket.on("boardState", (fen,history) => {
       chess.load(fen); // Load the board state
+      setHistory(history)
       renderBoard(
         boardref,
         chess,
@@ -249,6 +251,11 @@ const App = () => {
         </button>
       )}
       <div ref={boardref} className="board sm:h-100 sm:w-100 h-80 w-80"></div>
+      {history &&
+      <div className="history w-80 h-10 whitespace-nowrap overflow-x-auto bg-[#111111] ">
+        { history.join(" ")}
+      </div>
+      }
       {lostPlayer && (
         <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-90 bg-[#111111] text-white h-60 px-4">
           <button
@@ -278,7 +285,7 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[-30px] -left-15 sm:-left-30">
+            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[-5px] -left-15 sm:-left-30">
               Connected
             </div>
           )
