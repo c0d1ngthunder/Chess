@@ -23,6 +23,7 @@ const App = () => {
   const reset = () => {
     setLostPlayer("");
     setCauseofloss("");
+    setVisible(true)
     socket.connect();
   };
   const GetPieceUnicode = (piece) => {
@@ -227,7 +228,7 @@ const App = () => {
   }, [playerRole]);
 
   return (
-    <div className="w-full overflow-hidden h-screen bg-[#0a0a0a] flex flex-col items-center">
+    <div className="w-full overflow-hidden text-white h-screen bg-[#0a0a0a] flex flex-col items-center">
       <Navbar />
       {showBtn && (
         <button
@@ -277,12 +278,12 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-            <div className="bg-white after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-5 right-50">
+            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[-30px] -left-15 sm:-left-30">
               Connected
             </div>
           )
         ) : (
-          <div className="bg-[#111111] text-white h-[30%] sm:h-[50%] sm:top-[50%] sm:-translate-y-[50%] p-8 -translate-y-[50%] absolute left-[50%] -translate-x-[50%] top-[30%] ">
+          <div className="bg-[#111111] h-[30%] sm:h-[50%] sm:top-[50%] sm:-translate-y-[50%] p-8 -translate-y-[50%] absolute left-[50%] -translate-x-[50%] top-[30%] ">
             Waiting for another player to join...
           </div>
         ))}
