@@ -256,7 +256,7 @@ const App = () => {
           >
             X
           </button>
-          <h1 className="text-2xl py-10 pl-10">
+          <h1 className="text-2xl py-10 flex justify-center">
             {lostPlayer === playerRole ? "Opponent" : "You"}{" "}
             {causeofloss === "Draw" ? "drew the game" : "won"} by {causeofloss}
           </h1>
