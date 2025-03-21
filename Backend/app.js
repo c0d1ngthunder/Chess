@@ -70,10 +70,8 @@ io.on("connection", (uniquesocket) => {
         let response = chess.move(move);
         if (response) {
           currentplayer = chess.turn();
-          if (chess.inCheck()) {
-            io.emit("check", move);
-            io.emit("boardState", chess.fen());
-          } else if (chess.isGameOver()) {
+
+          if (chess.isGameOver()) {
             if (chess.isCheckmate()) {
               io.emit("move", move);
               io.emit("boardState", chess.fen());
@@ -87,6 +85,9 @@ io.on("connection", (uniquesocket) => {
             chess.reset();
             players = {}; // 🔥 Reset player slots
             io.emit("boardState", chess.fen()); // 🔥 Send updated board after reset
+          }else if (chess.inCheck()) {
+            io.emit("check", move);
+            io.emit("boardState", chess.fen());
           } else {
             io.emit("move", move);
             io.emit("boardState", chess.fen());
