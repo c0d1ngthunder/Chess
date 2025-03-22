@@ -4,14 +4,15 @@ import { Chess } from "chess.js"; // Import chess.js
 import renderBoard from "./renderBoard";
 import Navbar from "./Navbar";
 import { BrowserRouter, Routes, Route } from "react-router";
+import { IoMdClose } from "react-icons/io";
 
 const App = () => {
   let draggedPiece = useRef(null);
   let sourceSquare = useRef(null);
   // Variable to store the source square
   const [playerRole, setPlayerRole] = useState(null); // Variable to store the player role
-  let [lostPlayer, setLostPlayer] = useState("");
-  let [causeofloss, setCauseofloss] = useState("");
+  let [lostPlayer, setLostPlayer] = useState();
+  let [cause, setCause] = useState({isdraw:false,cause:null});
   const [visible, setVisible] = useState(true);
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
@@ -23,7 +24,7 @@ const App = () => {
 
   const reset = () => {
     setLostPlayer("");
-    setCauseofloss("");
+    setCause({isdraw:false,cause:null});
     setVisible(true)
     socket.connect();
   };
@@ -175,7 +176,7 @@ const App = () => {
         let audio2 = new Audio("./media/game-win-long.mp3");
         audio2.play();
       }
-      setCauseofloss("Checkmate");
+      setCause({isdraw:false,cause:"Checkmate"});
       setLostPlayer(turn);
       chess.reset();
     });
@@ -191,19 +192,21 @@ const App = () => {
         let audio2 = new Audio("./media/game-win-long.mp3");
         audio2.play();
       }
-      setCauseofloss("Resignation");
+      setCause({isdraw:false,cause:"Resignation"});
       setLostPlayer(color);
       chess.reset();
     });
 
     socket.on("draw", () => {
-      socket.disconnect();
+      setCause({isdraw:true,cause:""})
+      setLostPlayer("Both");
+      chess.move(move)
+      chess.load(fen)
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       let audio2 = new Audio("./media/game-draw.mp3");
       audio2.play();
-      setCauseofloss("Draw");
-      setLostPlayer("Both");
+      socket.disconnect();
       chess.reset();
     });
 
@@ -252,7 +255,7 @@ const App = () => {
       )}
       <div ref={boardref} className="board sm:h-100 sm:w-100 h-80 w-80"></div>
       {history &&
-      <div className="history w-80 h-10 whitespace-nowrap overflow-x-auto bg-[#111111] ">
+      <div className="history mt-2 w-80 h-10 left-[25] whitespace-nowrap overflow-x-auto bg-[#111111] ">
         { history.join(" ")}
       </div>
       }
@@ -262,11 +265,12 @@ const App = () => {
             onClick={() => setLostPlayer(null)}
             className="cursor-pointer absolute right-2 text-xl "
           >
-            X
+            <IoMdClose className="text-2xl my-1" />
           </button>
           <h1 className="text-2xl py-10 flex justify-center">
-            {lostPlayer === playerRole ? "Opponent" : "You"}{" "}
-            {causeofloss === "Draw" ? "drew the game" : "won"} by {causeofloss}
+            {!cause.isdraw && (lostPlayer === playerRole ? "Opponent" : "You") }
+            {" "}
+            {cause.isdraw ? "Game Draw" : "won"} {!cause.isdraw && " by"+ cause.cause}
           </h1>
           <button
             className={`text-lg cursor-pointer bg-transparent ${
@@ -285,7 +289,7 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[-5px] -left-15 sm:-left-30">
+            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[5px] -left-15 sm:-left-30">
               Connected
             </div>
           )
