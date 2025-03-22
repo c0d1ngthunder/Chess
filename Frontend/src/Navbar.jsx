@@ -4,7 +4,7 @@ import { Link, Route, Routes } from 'react-router-dom'
 const Navbar = () => {
   return (
     <>
-    <nav className='text-white container flex gap-8 bg-[#111111] w-full p-4 mt-0 mb-10'>
+    <nav className='text-white border-1 border-blue-400 border-t-0 rounded container flex gap-8 bg-[#111111] w-full p-4 mt-0 mb-10'>
         <Link to={"/"}>Chess</Link>
         <Link to={"/play"}>Play</Link>
         <Link to={"/rules"}>Rules</Link>

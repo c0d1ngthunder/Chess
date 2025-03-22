@@ -3,7 +3,6 @@ import { socket } from "./socket"; // Import socket.io-client
 import { Chess } from "chess.js"; // Import chess.js
 import renderBoard from "./renderBoard";
 import Navbar from "./Navbar";
-import { BrowserRouter, Routes, Route } from "react-router";
 import { IoMdClose } from "react-icons/io";
 
 const App = () => {
@@ -270,7 +269,7 @@ const App = () => {
           <h1 className="text-2xl py-10 flex justify-center">
             {!cause.isdraw && (lostPlayer === playerRole ? "Opponent" : "You") }
             {" "}
-            {cause.isdraw ? "Game Draw" : "won"} {!cause.isdraw && " by"+ cause.cause}
+            {cause.isdraw ? "Game Draw" : "won"} {!cause.isdraw && " by "+ cause.cause}
           </h1>
           <button
             className={`text-lg cursor-pointer bg-transparent ${
@@ -289,7 +288,7 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-            <div className="bg-[#111111] after:content-[''] h-10 after:bg-green-400  after:w-[100%] after:animate-[decrease_3s_linear_forwards] after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[5px] -left-15 sm:-left-30">
+            <div className="bg-[#111111] rounded font-bold text-blue-400 after:content-[''] h-10 after:bg-white after:w-[100%] after:animate-[decrease_3s_linear_forwards] overflow-hidden after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[5x] -left-15 sm:-left-30">
               Connected
             </div>
           )
