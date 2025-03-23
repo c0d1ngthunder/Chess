@@ -6,6 +6,7 @@ import GameEnd from "./components/GameEnd";
 import Sidebar from "./components/Sidebar";
 import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
+import {CiLock,CiUnlock} from "react-icons/ci"	
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -20,6 +21,7 @@ const App = () => {
   const [game, setGame] = useState();
   const [hover, setHover] = useState(false);
   const [history, setHistory] = useState([]);
+  const [isLocked, setIsLocked] = useState(false);
 
   const boardref = useRef(null); // Reference to the board
 
@@ -28,6 +30,11 @@ const App = () => {
     setCause({ isdraw: false, cause: null });
     setVisible(true);
     socket.connect();
+  };
+
+  const toggleLock = () => {
+    document.body.classList.toggle("overflow-hidden");
+    setIsLocked(document.body.classList.contains("overflow-hidden")); // Update state
   };
 
   const resign = ()=>{
@@ -270,10 +277,10 @@ const App = () => {
             } relative sm:h-100 grid sm:w-100 h-80 w-80`}
           ></div>
           <button
-            onClick={() => document.body.classList.toggle("overflow-hidden")}
-            className="top-0 absolute right-0 sm:right-20 lg:opacity-0"
+            onClick={() =>toggleLock()}
+            className="top-0 text-xl absolute right-0 sm:right-20 lg:opacity-0"
           >
-            Lock
+            {isLocked ? <CiUnlock/> : <CiLock/> }
           </button>
         </div>
         {game && <Sidebar history={history} resign={resign} playerRole={playerRole} chess={chess} />}
