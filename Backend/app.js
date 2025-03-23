@@ -61,6 +61,24 @@ io.on("connection", (uniquesocket) => {
     }
   });
 
+  uniquesocket.on("resign",(player)=>{
+    if (player === "w"){
+      delete players.white 
+      delete players.black
+      chess.reset()
+      io.emit("Resign","w")
+      io.emit("connecting")
+      io.emit("boardState",chess.fen(),chess.history())
+    }else{
+      delete players.white 
+      delete players.black
+      chess.reset()
+      io.emit("Resign","b")
+      io.emit("connecting")
+      io.emit("boardState",chess.fen(),chess.history())
+    }
+  })
+
   uniquesocket.on("move", (move) => {
     if (players.white && players.black) {
       try {

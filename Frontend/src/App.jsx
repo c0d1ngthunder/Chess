@@ -29,6 +29,11 @@ const App = () => {
     setVisible(true);
     socket.connect();
   };
+
+  const resign = ()=>{
+    socket.emit("resign",playerRole)
+  }
+
   const GetPieceUnicode = (piece) => {
     const unicodes = {
       p: {
@@ -271,7 +276,7 @@ const App = () => {
             Lock
           </button>
         </div>
-        {game && <Sidebar history={history} />}
+        {game && <Sidebar history={history} resign={resign} playerRole={playerRole} chess={chess} />}
       </div>
       { game &&
         (!playerRole && (

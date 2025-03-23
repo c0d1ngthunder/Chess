@@ -11,7 +11,7 @@ const Waiting = () => {
       <div className="status-text">
         <div className="status-label">
           <span className="status-prompt">&gt;</span>
-          <span>SYSTEM_STATUS:</span>
+          <span>GAME STATUS:</span>
           <span className="status-value">WAITING</span>
         </div>
         <div className="status-message">
