@@ -90,3 +90,111 @@
 .nonfocused:hover{
     background-color: #090c11;
 }
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+  }
+  
+  
+.waiting-message {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
+    padding: 1rem;
+    z-index: 50;
+    font-family: monospace;
+    max-width: 28rem;
+  }
+  
+  .waiting-message-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .loading-indicator {
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .loading-spinner {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #30363d;
+    border-top-color: #14b8a6;
+    border-radius: 9999px;
+    animation: spin 1.5s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+  }
+  
+  .status-text {
+    display: grid;
+    gap: 0.25rem;
+  }
+  
+  .status-label {
+    font-size: 0.875rem;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+  }
+  
+  .status-prompt {
+    color: #14b8a6;
+    margin-right: 0.5rem;
+  }
+  
+  .status-value {
+    color: #fbbf24;
+    margin-left: 0.5rem;
+  }
+  
+  .status-message {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+  
+  .cursor-blink {
+    display: inline-block;
+    width: 0.5rem;
+    height: 1rem;
+    margin-left: 0.25rem;
+    background-color: #14b8a6;
+    animation: blink 1s step-end infinite;
+  }
+  
+  .connection-status {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    border-top: 1px solid #30363d;
+    padding-top: 0.75rem;
+  }
+  
+  .status-indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #fbbf24;
+    animation: pulse 2s infinite;
+  }
+  
+  .connection-info {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
