@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { socket } from "./socket"; // Import socket.io-client
 import { Chess } from "chess.js"; // Import chess.js
 import renderBoard from "./renderBoard";
-import Navbar from "./Navbar";
+import Navbar from "./components/Navbar";
 import { IoMdClose } from "react-icons/io";
 
 const App = () => {
@@ -10,21 +10,21 @@ const App = () => {
   let sourceSquare = useRef(null);
   // Variable to store the source square
   const [playerRole, setPlayerRole] = useState(null); // Variable to store the player role
-  let [lostPlayer, setLostPlayer] = useState();
-  let [cause, setCause] = useState({isdraw:false,cause:null});
+  let [lostPlayer, setLostPlayer] = useState(null);
+  let [cause, setCause] = useState({ isdraw: false, cause: null });
   const [visible, setVisible] = useState(true);
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState();
   const [hover, setHover] = useState(false);
-  const [history,setHistory] = useState()
+  const [history, setHistory] = useState();
 
   const boardref = useRef(null); // Reference to the board
 
   const reset = () => {
     setLostPlayer("");
-    setCause({isdraw:false,cause:null});
-    setVisible(true)
+    setCause({ isdraw: false, cause: null });
+    setVisible(true);
     socket.connect();
   };
   const GetPieceUnicode = (piece) => {
@@ -125,9 +125,9 @@ const App = () => {
       );
     });
 
-    socket.on("boardState", (fen,history) => {
+    socket.on("boardState", (fen, history) => {
       chess.load(fen); // Load the board state
-      setHistory(history)
+      setHistory(history);
       renderBoard(
         boardref,
         chess,
@@ -175,7 +175,7 @@ const App = () => {
         let audio2 = new Audio("./media/game-win-long.mp3");
         audio2.play();
       }
-      setCause({isdraw:false,cause:"Checkmate"});
+      setCause({ isdraw: false, cause: "Checkmate" });
       setLostPlayer(turn);
       chess.reset();
     });
@@ -191,16 +191,16 @@ const App = () => {
         let audio2 = new Audio("./media/game-win-long.mp3");
         audio2.play();
       }
-      setCause({isdraw:false,cause:"Resignation"});
+      setCause({ isdraw: false, cause: "Resignation" });
       setLostPlayer(color);
       chess.reset();
     });
 
     socket.on("draw", () => {
-      setCause({isdraw:true,cause:""})
+      setCause({ isdraw: true, cause: "" });
       setLostPlayer("Both");
-      chess.move(move)
-      chess.load(fen)
+      chess.move(move);
+      chess.load(fen);
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       let audio2 = new Audio("./media/game-draw.mp3");
@@ -218,22 +218,22 @@ const App = () => {
   }, [playerRole]);
 
   useEffect(() => {
-      if (playerRole !== null) {
-        renderBoard(
-          boardref,
-          chess,
-          playerRole,
-          GetPieceUnicode,
-          draggedPiece,
-          sourceSquare,
-          handleMove
-        );
-      }
+    if (playerRole !== null) {
+      renderBoard(
+        boardref,
+        chess,
+        playerRole,
+        GetPieceUnicode,
+        draggedPiece,
+        sourceSquare,
+        handleMove
+      );
+    }
   }, [playerRole]);
 
   return (
-    <div className="w-full overflow-hidden text-white h-screen bg-[#0a0a0a] flex flex-col items-center">
-      <Navbar />
+    <main className="w-full min-h-screen m-auto items-center text-white h-full bg-[#0a0a0a] flex flex-col">
+      <div className="w-full p-4 mb-10 text-2xl font-extrabold text-[#2DD4AF]">Chess</div>
       {showBtn && (
         <button
           onClick={() => {
@@ -247,17 +247,52 @@ const App = () => {
             hover
               ? "bg-white border-white text-black"
               : "bg-transparent text-white"
-          } absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[50%]`}
+          } absolute -translate-x-[50%] z-10 -translate-y-[50%] top-[50%] left-[50%]`}
         >
           Play
         </button>
       )}
-      <div ref={boardref} className="board sm:h-100 sm:w-100 h-80 w-80"></div>
-      {history &&
-      <div className="history mt-2 w-80 h-10 left-[25] whitespace-nowrap overflow-x-auto bg-[#111111] ">
-        { history.join(" ")}
+      <div className="w-full flex flex-col lg:flex-row h-full">
+        <div id="left" className="w-full relative flex justify-center">
+          <div
+            ref={boardref}
+            className={`board ${
+              !showBtn && "shadow-[0_0_15px_rgba(20,184,166,0.2)]"
+            } relative sm:h-100 grid sm:w-100 h-80 w-80`}
+          ></div>
+          <button onClick={()=>document.body.classList.toggle("overflow-hidden")} className="top-0 absolute right-0 sm:right-20 lg:opacity-0">Lock</button>
+        </div>
+        {history && (
+          <div id="right" className="flex gap-4 flex-col items-center right w-full p-5">
+            <section className="bg-[#161B22] w-[70%] p-4 rounded">
+              <div className="grid gap-4 grid-cols-2">
+                <div className="text-xs text-[#9CA3AF] p-4 rounded-sm bg-teal-400/10 border-teal-400/30 border">
+                  WHITE
+                </div>
+                <div className="text-xs text-[#9CA3AF] p-4 rounded-sm bg-teal-400/10 border-teal-400/30 border">
+                  BLACK
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="py-1 px-4 text-[#9CA3AF] rounded-sm border-[#30363D] border">
+                  <span className="text-xs">MOVES:</span>
+                  <span>{Math.floor(history.length / 2)}</span>
+                </div>
+                <div></div>
+              </div>
+            </section>
+            <section className="bg-[#161B22] text-sm w-[70%] flex flex-wrap gap-4 p-4 rounded">
+              <button className={`py-2 focused cursor-pointer bg-[#0D9488] lg:w-30 w-30 md:w-25 rounded-sm`}>New</button>
+              <button className="py-2 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">Resign</button>
+              <button className="py-2 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">Settings</button>
+              <button className="py-2 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">Export</button>
+              <button className="py-2 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">Share</button>
+              <button className="py-2 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">Fullscreen</button>
+            </section>
+            <section className="bg-[#161B22] w-[80%] rounded"></section>
+          </div>
+        )}
       </div>
-      }
       {lostPlayer && (
         <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-90 bg-[#111111] text-white h-60 px-4">
           <button
@@ -267,9 +302,9 @@ const App = () => {
             <IoMdClose className="text-2xl my-1" />
           </button>
           <h1 className="text-2xl py-10 flex justify-center">
-            {!cause.isdraw && (lostPlayer === playerRole ? "Opponent" : "You") }
-            {" "}
-            {cause.isdraw ? "Game Draw" : "won"} {!cause.isdraw && " by "+ cause.cause}
+            {!cause.isdraw && (lostPlayer === playerRole ? "Opponent" : "You")}{" "}
+            {cause.isdraw ? "Game Draw" : "won"}{" "}
+            {!cause.isdraw && " by " + cause.cause}
           </h1>
           <button
             className={`text-lg cursor-pointer bg-transparent ${
@@ -288,16 +323,16 @@ const App = () => {
       {!showBtn &&
         (game ? (
           visible && (
-            <div className="bg-[#111111] rounded font-bold text-blue-400 after:content-[''] h-10 after:bg-white after:w-[100%] after:animate-[decrease_3s_linear_forwards] overflow-hidden after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[5x] -left-15 sm:-left-30">
+            <div className="bg-[#161B22] rounded font-bold text-white after:content-[''] h-10 after:bg-white after:w-[100%] after:animate-[decrease_3s_linear_forwards] overflow-hidden after:absolute after:bottom-0 after:left-0 after:h-[5px] py-2 relative w-45 px-4 bottom-[5x] -left-15 sm:-left-[40%]">
               Connected
             </div>
           )
         ) : (
-          <div className="bg-[#111111] h-[30%] sm:h-[50%] sm:top-[50%] sm:-translate-y-[50%] p-8 -translate-y-[50%] absolute left-[50%] -translate-x-[50%] top-[30%] ">
+          <div className="bg-[#161b22] rounded h-[10%] flex items-center sm:h-[10%] sm:top-[92%] p-8 -translate-y-[50%] absolute left-[2%] top-[30%] ">
             Waiting for another player to join...
           </div>
         ))}
-    </div>
+    </main>
   );
 };
 

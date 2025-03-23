@@ -1,3 +1,4 @@
+@import url("./font.css");
 @import "tailwindcss";
 
 .board {
@@ -9,7 +10,7 @@
 }
 
 .piece.white {
-    color: white;
+    color: rgb(164, 164, 164);
     filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
 }
 
@@ -28,11 +29,15 @@
 }
 
 .square.light {
-    background-color: #f0d9b5;
+    /* background-color: #f0d9b5; */
+    /* background-color: #161B22; */
+    background-color: #2c3644;
 }
 
 .square.dark {
-    background-color: #b58863;
+    /* background-color: #b58863; */
+    /* background-color:#0D1117 ; */
+    background-color:#1d2633 ;
 }
 
 .piece {
@@ -70,11 +75,6 @@
     background: transparent; /* Hide track */
 }
 
-/* 
-.history{
-    scrollbar-width: thin;
-} */
-
 @keyframes decrease {
     0% {
       width: 100%;
@@ -83,3 +83,10 @@
       width: 0%;
     }
   }
+
+.focused:hover{
+    background-color: #0c7b72;
+}
+.nonfocused:hover{
+    background-color: #090c11;
+}
