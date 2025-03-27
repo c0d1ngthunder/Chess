@@ -6,7 +6,7 @@ import GameEnd from "./components/GameEnd";
 import Sidebar from "./components/Sidebar";
 import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
-import {CiLock,CiUnlock} from "react-icons/ci"	
+import { CiLock, CiUnlock } from "react-icons/ci";
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -18,7 +18,7 @@ const App = () => {
   const [visible, setVisible] = useState(true);
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
-  const [game, setGame] = useState();
+  const [game, setGame] = useState(false);
   const [hover, setHover] = useState(false);
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
@@ -32,14 +32,26 @@ const App = () => {
     socket.connect();
   };
 
+  const renderBoardUtil = () => {
+    renderBoard(
+      boardref,
+      chess,
+      playerRole,
+      GetPieceUnicode,
+      draggedPiece,
+      sourceSquare,
+      handleMove
+    );
+  };
+
   const toggleLock = () => {
     document.body.classList.toggle("overflow-hidden");
     setIsLocked(document.body.classList.contains("overflow-hidden")); // Update state
   };
 
-  const resign = ()=>{
-    socket.emit("resign",playerRole)
-  }
+  const resign = () => {
+    socket.emit("resign", playerRole);
+  };
 
   const GetPieceUnicode = (piece) => {
     const unicodes = {
@@ -78,20 +90,7 @@ const App = () => {
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
 
-    try {
-      let result = chess.move(move); // Attempt to move the piece
-      if (result) {
-        let audio1 = new Audio("./media/move-self.mp3");
-        audio1.play();
-        socket.emit("move", move);
-      } else {
-        let audio1 = new Audio("./media/illegal.mp3");
-        audio1.play();
-      }
-    } catch {
-      let audio1 = new Audio("./media/illegal.mp3");
-      audio1.play();
-    }
+    socket.emit("move", move);
   };
   const connectToServer = () => {
     socket.connect();
@@ -104,18 +103,13 @@ const App = () => {
       setGame(true);
       let audio1 = new Audio("./media/game-start.mp3");
       audio1.play();
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
-      const timer = setTimeout(() => {
-        changevisible();
-      }, 3000);
+      renderBoardUtil();
+      setTimeout(changevisible, 3000);
+    });
+
+    socket.on("invalidMove", () => {
+      let audio1 = new Audio("./media/illegal.mp3");
+      audio1.play();
     });
 
     socket.on("connecting", () => {
@@ -128,49 +122,27 @@ const App = () => {
 
     socket.on("spectatorRole", () => {
       setPlayerRole(role);
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
+      renderBoardUtil();
     });
 
     socket.on("boardState", (fen, history) => {
       chess.load(fen); // Load the board state
       setHistory(history);
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
+      renderBoardUtil();
     });
 
     socket.on("move", (move) => {
-      let move1 = chess.move(move);
-      if (move1.isCapture()) {
-        let audio1 = new Audio("./media/capture.mp3");
-        audio1.play();
-      } else {
-        let audio1 = new Audio("./media/move-opponent.mp3");
-        audio1.play();
-      }
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
+      try {
+        let move1 = chess.move(move);
+        if (move1.isCapture()) {
+          let audio1 = new Audio("./media/capture.mp3");
+          audio1.play();
+        } else {
+          let audio1 = new Audio("./media/move-opponent.mp3");
+          audio1.play();
+        }
+      } catch {}
+      renderBoardUtil();
     });
 
     socket.on("check", () => {
@@ -233,17 +205,15 @@ const App = () => {
 
   useEffect(() => {
     if (playerRole !== null) {
-      renderBoard(
-        boardref,
-        chess,
-        playerRole,
-        GetPieceUnicode,
-        draggedPiece,
-        sourceSquare,
-        handleMove
-      );
+      renderBoardUtil();
     }
   }, [playerRole]);
+
+  useEffect(() => {
+    if (game) {
+      renderBoardUtil();
+    }
+  }, [game]);
 
   return (
     <main className="w-full min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col">
@@ -277,42 +247,37 @@ const App = () => {
             } relative sm:h-100 grid sm:w-100 h-80 w-80`}
           ></div>
           <button
-            onClick={() =>toggleLock()}
+            onClick={() => toggleLock()}
             className="top-0 text-xl absolute right-0 sm:right-20 lg:opacity-0"
           >
-            {isLocked ? <CiUnlock/> : <CiLock/> }
+            {isLocked ? <CiUnlock /> : <CiLock />}
           </button>
         </div>
-        {game && <Sidebar history={history} resign={resign} playerRole={playerRole} chess={chess} />}
+        {game && (
+          <Sidebar
+            history={history}
+            resign={resign}
+            playerRole={playerRole}
+            chess={chess}
+          />
+        )}
       </div>
-      { game &&
-        (!playerRole && (
-          <div>
-            You are a spectator
-          </div>
-        ))
-      }
-      { lostPlayer && (playerRole ? (
-        <GameEnd
-          lostPlayer={lostPlayer}
-          cause={cause}
-          reset={reset}
-          playerRole={playerRole}
-          setLostPlayer={setLostPlayer}
-          setHover={setHover}
-          hover={hover}
-        />
-      )
-      : `${lostPlayer==="w" ? "White" : "Black" } lost by ${cause.cause}`
-    )}
-      {!showBtn &&
-        (game ? (
-          visible && (
-            <Connected/>
-          )
+      {game && !playerRole && <div>You are a spectator</div>}
+      {lostPlayer &&
+        (playerRole ? (
+          <GameEnd
+            lostPlayer={lostPlayer}
+            cause={cause}
+            reset={reset}
+            playerRole={playerRole}
+            setLostPlayer={setLostPlayer}
+            setHover={setHover}
+            hover={hover}
+          />
         ) : (
-          <Waiting/>
+          `${lostPlayer === "w" ? "White" : "Black"} lost by ${cause.cause}`
         ))}
+      {!showBtn && (game ? visible && <Connected /> : <Waiting />)}
     </main>
   );
 };
