@@ -48,7 +48,8 @@ const Sidebar = ({ history, chess, playerRole, resign }) => {
         <section className="bg-[#161B22] text-sm w-[70%] flex flex-wrap gap-4 p-4 rounded">
           <button
             onClick={() => {}}
-            className={`py-2 focused cursor-pointer bg-[#0D9488] lg:w-30 w-30 md:w-25 rounded-sm`}
+            className={`py-2 focused cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-[#0D9488] lg:w-30 w-30 md:w-25 rounded-sm`}
+            disabled
           >
             <VscDebugRestart className="inline mr-4 text-lg" />
             <span>New</span>
