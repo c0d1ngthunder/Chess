@@ -7,6 +7,7 @@ import Sidebar from "./components/Sidebar";
 import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
 import { CiLock, CiUnlock } from "react-icons/ci";
+import domtoimage from "dom-to-image";
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -84,11 +85,35 @@ const App = () => {
     if (!piece) return "";
     return unicodes[piece.type][piece.color];
   };
+
+  function exportBoard() {
+    const board = document.getElementById("board");
+
+    domtoimage.toPng(board)
+        .then(dataUrl => {
+            const link = document.createElement("a");
+            link.href = dataUrl;
+            link.download = "chessboard.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(error => console.error("Error capturing board:", error));
+}
+
   const handleMove = (source, target) => {
     const move = {
       from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
+    
+    chess.header("Event", "Casual Game",
+      "Site", "chessmasters",
+      "Date", Date.now(),
+      "White", "Player1",
+      "Black", "Player2",
+      "Result", "1-0")
+    console.log(chess.pgn());
 
     socket.emit("move", move);
   };
@@ -240,12 +265,12 @@ const App = () => {
       )}
       <div className="w-full flex flex-col lg:flex-row h-full">
         <div id="left" className="w-full relative flex justify-center">
-          <div
+          {!showBtn && <div
             ref={boardref}
-            className={`board ${
-              !showBtn && "shadow-[0_0_15px_rgba(20,184,166,0.2)]"
+            id="board"
+            className={`board ${"shadow-[0_0_15px_rgba(20,184,166,0.2)]"
             } relative sm:h-100 grid sm:w-100 h-80 w-80`}
-          ></div>
+            ></div>}
           <button
             onClick={() => toggleLock()}
             className="top-0 text-xl absolute right-0 sm:right-20 lg:opacity-0"
@@ -255,6 +280,7 @@ const App = () => {
         </div>
         {game && (
           <Sidebar
+          exportBoard={exportBoard}
             history={history}
             resign={resign}
             playerRole={playerRole}
@@ -262,7 +288,7 @@ const App = () => {
           />
         )}
       </div>
-      {game && !playerRole && <div>You are a spectator</div>}
+      {game && (!playerRole && <div>You are a spectator</div>)}
       {lostPlayer &&
         (playerRole ? (
           <GameEnd

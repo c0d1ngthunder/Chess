@@ -9,7 +9,7 @@ import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
 
-const Sidebar = ({ history, chess, playerRole, resign }) => {
+const Sidebar = ({ history, chess, playerRole, resign, exportBoard }) => {
   return (
     <div
       id="right"
@@ -67,7 +67,7 @@ const Sidebar = ({ history, chess, playerRole, resign }) => {
             <IoSettingsOutline className="text-lg inline mr-4" />
             Settings
           </button>
-          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
+          <button onClick={exportBoard} className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
             <FiDownload className="text-lg inline mr-4" />
             <span>Export</span>
           </button>
