@@ -34,13 +34,16 @@ const GameEnd = ({ setLostPlayer, lostPlayer, playerRole, cause, setHover, hover
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center font-mono">
+    <div className="fixed inset-0 gameend bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center font-mono">
       <div className="bg-[#0d1117] border border-[#30363d] shadow-[0_0_20px_rgba(20,184,166,0.2)] w-full max-w-md p-6 relative">
         {/* Header with close button */}
         <div className="flex justify-between items-center border-b border-[#30363d] pb-3">
           <div className="text-sm text-gray-400">GAME_SESSION: TERMINATED</div>
           <button
-            onClick={() => setLostPlayer(null)}
+            onClick={() =>{ let gameend = document.querySelector(".gameend")
+              gameend.classList.add("pointer-events-none")
+              gameend.classList.add("opacity-0")
+            }}
             className="text-gray-400 hover:text-teal-400 transition-colors"
             aria-label="Close"
           >

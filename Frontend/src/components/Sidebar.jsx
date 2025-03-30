@@ -9,7 +9,7 @@ import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
 
-const Sidebar = ({ history, chess, playerRole, resign, exportBoard }) => {
+const Sidebar = ({ history, chess, playerRole, resign, exportBoard,lostPlayer, reset }) => {
   return (
     <div
       id="right"
@@ -47,9 +47,9 @@ const Sidebar = ({ history, chess, playerRole, resign, exportBoard }) => {
       {playerRole && (
         <section className="bg-[#161B22] text-sm w-[70%] flex flex-wrap gap-4 p-4 rounded">
           <button
-            onClick={() => {}}
+            onClick={() => {reset()}}
             className={`py-2 focused cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-[#0D9488] lg:w-30 w-30 md:w-25 rounded-sm`}
-            disabled
+            disabled={!lostPlayer ? true : false}
           >
             <VscDebugRestart className="inline mr-4 text-lg" />
             <span>New</span>

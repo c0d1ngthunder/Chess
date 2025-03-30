@@ -285,6 +285,8 @@ const App = () => {
             resign={resign}
             playerRole={playerRole}
             chess={chess}
+            lostPlayer={lostPlayer}
+            reset={reset}
           />
         )}
       </div>
