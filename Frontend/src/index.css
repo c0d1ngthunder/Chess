@@ -9,6 +9,12 @@
     margin-left: 1rem;
 }
 
+.play:hover{
+  background-color: white;
+  color: #000;
+  border: #fff;
+}
+
 .piece.white {
     color: rgb(164, 164, 164);
     filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));

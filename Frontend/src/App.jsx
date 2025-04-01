@@ -8,7 +8,6 @@ import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import domtoimage from "dom-to-image";
-import { motion, AnimatePresence } from "motion/react";
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -22,7 +21,6 @@ const App = () => {
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [hover, setHover] = useState(false);
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
 
@@ -260,15 +258,8 @@ const App = () => {
           onClick={() => {
             connectToServer();
             setShowBtn(false);
-            setHover(false);
           }}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          className={`text-md cursor-pointer p-4 px-8 bg-transparent transition duration-200 ease border-1 ${
-            hover
-              ? "bg-white border-white text-black"
-              : "bg-transparent text-white"
-          } absolute -translate-x-[50%] z-10 -translate-y-[50%] top-[50%] left-[50%]`}
+          className={`text-md play cursor-pointer p-4 px-8 bg-transparent transition duration-200 ease border-1 absolute -translate-x-[50%] z-10 -translate-y-[50%] top-[50%] left-[50%]`}
         >
           Play
         </button>

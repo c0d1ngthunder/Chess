@@ -8,7 +8,6 @@ import { MdFullscreen } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
-import { motion } from "motion/react";
 
 const Sidebar = ({
   setIsFullscreen,

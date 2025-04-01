@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdClose, IoMdRefresh, IoMdTrophy, IoMdFlag, IoMdTime } from "react-icons/io";
 
-const GameEnd = ({ setLostPlayer, lostPlayer, playerRole, cause, setHover, hover, reset }) => {
+const GameEnd = ({ setLostPlayer, lostPlayer, playerRole, cause, reset }) => {
   // Determine the result type icon
   const ResultIcon = () => {
     if (cause.isdraw) {
