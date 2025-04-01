@@ -5,16 +5,14 @@ const renderBoard = (
   GetPieceUnicode,
   draggedPiece,
   sourceSquare,
-  handleMove
+  handleMove,
+  isFullscreen
 ) => {
   const boardelement = boardref.current; // Get the board element
   const board = chess.board(); // Get the board from the chess game
 
-  if (playerRole === "b") {
-    boardelement.classList.add("flipped");
-  }if (playerRole === "w"){
-    boardelement.classList.remove("flipped")
-  }
+  boardelement.classList.toggle("flipped", playerRole === "b");
+
 
   boardref.current.innerHTML = ""; // Clear the board
 
@@ -32,12 +30,22 @@ const renderBoard = (
 
       if (square) {
         const pieceElement = document.createElement("div"); // Create a piece element
+        pieceElement.classList.remove("text-5xl", "sm:text-5xl");
+        if (!isFullscreen){
         pieceElement.classList.add(
           "piece",
           "text-2xl",
           "sm:text-4xl",
           square.color === "w" ? "white" : "black" // Add color class to the piece element
         ); // Add class to the piece element
+      }else{
+        pieceElement.classList.add(
+          "piece",
+          "text-2xl",
+          "sm:text-5xl",
+          square.color === "w" ? "white" : "black" // Add color class to the piece element
+        ); // Add class to the piece element
+      }
 
         pieceElement.innerText = GetPieceUnicode(square); // Set the innerHTML of the piece element
         pieceElement.draggable = playerRole === square.color; // Set the draggable attribute of the piece element

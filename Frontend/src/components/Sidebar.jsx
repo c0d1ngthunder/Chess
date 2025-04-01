@@ -8,12 +8,22 @@ import { MdFullscreen } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
+import { motion } from "motion/react";
 
-const Sidebar = ({ history, chess, playerRole, resign, exportBoard,lostPlayer, reset }) => {
+const Sidebar = ({
+  setIsFullscreen,
+  history,
+  chess,
+  playerRole,
+  resign,
+  exportBoard,
+  lostPlayer,
+  reset,
+}) => {
   return (
     <div
       id="right"
-      className="flex gap-4 flex-col items-center right w-full p-5"
+      className="flex gap-4 flex-col lg:w-full items-center right sm:w-[70%] w-full p-5"
     >
       <section className="bg-[#161B22] w-[70%] p-4 rounded">
         <div className="grid gap-4 grid-cols-2">
@@ -47,8 +57,10 @@ const Sidebar = ({ history, chess, playerRole, resign, exportBoard,lostPlayer, r
       {playerRole && (
         <section className="bg-[#161B22] text-sm w-[70%] flex flex-wrap gap-4 p-4 rounded">
           <button
-            onClick={() => {reset()}}
-            className={`py-2 focused cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-[#0D9488] lg:w-30 w-30 md:w-25 rounded-sm`}
+            onClick={() => {
+              reset();
+            }}
+            className={`py-2 focused cursor-pointer disabled:cursor-not-allowed bg-[#0D9488] sm:w-30 w-full rounded-sm`}
             disabled={!lostPlayer ? true : false}
           >
             <VscDebugRestart className="inline mr-4 text-lg" />
@@ -58,24 +70,32 @@ const Sidebar = ({ history, chess, playerRole, resign, exportBoard,lostPlayer, r
             onClick={() => {
               resign();
             }}
-            className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm"
+            className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
           >
             <IoFlagOutline className="inline mr-4 text-lg" />{" "}
             <span>Resign</span>
           </button>
-          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
-            <IoSettingsOutline className="text-lg inline mr-4" />
+          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm">
+            <IoSettingsOutline className="inline text-lg mr-4" />
             Settings
           </button>
-          <button onClick={exportBoard} className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
+          <button
+            onClick={exportBoard}
+            className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
+          >
             <FiDownload className="text-lg inline mr-4" />
             <span>Export</span>
           </button>
-          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
+          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm">
             <IoShareSocialOutline className="text-lg inline mr-4" />
             <span>Share</span>
           </button>
-          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] md:w-25 w-30 lg:w-30 rounded-sm">
+          <button
+            onClick={() => {
+              setIsFullscreen(true);
+            }}
+            className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
+          >
             <MdFullscreen className="text-lg mr-4 inline" />
             <span>Fullscreen</span>
           </button>

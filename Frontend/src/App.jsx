@@ -8,6 +8,7 @@ import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import domtoimage from "dom-to-image";
+import { motion, AnimatePresence } from "motion/react";
 
 const App = () => {
   let draggedPiece = useRef(null);
@@ -20,6 +21,7 @@ const App = () => {
   const chess = useRef(new Chess()).current; // State to store the chess game
   let [showBtn, setShowBtn] = useState(true);
   const [game, setGame] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [hover, setHover] = useState(false);
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
@@ -41,7 +43,8 @@ const App = () => {
       GetPieceUnicode,
       draggedPiece,
       sourceSquare,
-      handleMove
+      handleMove,
+      isFullscreen
     );
   };
 
@@ -89,30 +92,39 @@ const App = () => {
   function exportBoard() {
     const board = document.getElementById("board");
 
-    domtoimage.toPng(board)
-        .then(dataUrl => {
-            const link = document.createElement("a");
-            link.href = dataUrl;
-            link.download = "chessboard.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        })
-        .catch(error => console.error("Error capturing board:", error));
-}
+    domtoimage
+      .toPng(board)
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = "chessboard.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => console.error("Error capturing board:", error));
+  }
 
   const handleMove = (source, target) => {
     const move = {
       from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
-    
-    chess.header("Event", "Casual Game",
-      "Site", "chessmasters",
-      "Date", Date.now(),
-      "White", "Player1",
-      "Black", "Player2",
-      "Result", "1-0")
+
+    chess.header(
+      "Event",
+      "Casual Game",
+      "Site",
+      "chessmasters",
+      "Date",
+      Date.now(),
+      "White",
+      "Player1",
+      "Black",
+      "Player2",
+      "Result",
+      "1-0"
+    );
     console.log(chess.pgn());
 
     socket.emit("move", move);
@@ -145,9 +157,8 @@ const App = () => {
       setPlayerRole(role);
     });
 
-    socket.on("spectatorRole", () => {
+    socket.on("spectatorRole", (role) => {
       setPlayerRole(role);
-      renderBoardUtil();
     });
 
     socket.on("boardState", (fen, history) => {
@@ -167,7 +178,6 @@ const App = () => {
           audio1.play();
         }
       } catch {}
-      renderBoardUtil();
     });
 
     socket.on("check", () => {
@@ -234,17 +244,17 @@ const App = () => {
     }
   }, [playerRole]);
 
-  useEffect(() => {
-    if (game) {
-      renderBoardUtil();
-    }
-  }, [game]);
-
   return (
-    <main className="w-full min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col">
-      <div className="w-full p-4 mb-10 text-2xl font-extrabold text-[#2DD4AF]">
-        Chess
-      </div>
+    <main
+      className={`w-full lg:overflow-hidden ${
+        isFullscreen && "overflow-hidden" 
+      } min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col`}
+    >
+      {!isFullscreen && (
+        <div className="w-full p-4 mb-10 text-2xl font-extrabold text-[#2DD4AF]">
+          Chess
+        </div>
+      )}
       {showBtn && (
         <button
           onClick={() => {
@@ -263,14 +273,24 @@ const App = () => {
           Play
         </button>
       )}
-      <div className="w-full flex flex-col lg:flex-row h-full">
-        <div id="left" className="w-full relative flex justify-center">
-          {!showBtn && <div
-            ref={boardref}
-            id="board"
-            className={`board ${"shadow-[0_0_15px_rgba(20,184,166,0.2)]"
-            } relative sm:h-100 grid sm:w-100 h-80 w-80`}
-            ></div>}
+      <div className="w-full relative flex flex-col items-center lg:flex-row h-full">
+        <div
+          id="left"
+          className={`w-full relative flex justify-center h-full ${
+            isFullscreen && "h-screen"
+          } items-center `}
+        >
+          {!showBtn && (
+            <div
+              ref={boardref}
+              id="board"
+              className={`board ${
+                playerRole === "b" && "flipped"
+              } shadow-[0_0_15px_rgba(20,184,166,0.2)] transition-all ease-in-out duration-500 ${
+                isFullscreen && "scale-125"
+              } relative sm:h-100 grid sm:w-100 h-80 w-80`}
+            ></div>
+          )}
           <button
             onClick={() => toggleLock()}
             className="top-0 text-xl absolute right-0 sm:right-20 lg:opacity-0"
@@ -278,19 +298,40 @@ const App = () => {
             {isLocked ? <CiUnlock /> : <CiLock />}
           </button>
         </div>
-        {game && (
-          <Sidebar
-          exportBoard={exportBoard}
-            history={history}
-            resign={resign}
-            playerRole={playerRole}
-            chess={chess}
-            lostPlayer={lostPlayer}
-            reset={reset}
-          />
-        )}
+        {game &&
+          (!isFullscreen ? (
+            <Sidebar
+              exportBoard={exportBoard}
+              history={history}
+              resign={resign}
+              playerRole={playerRole}
+              chess={chess}
+              lostPlayer={lostPlayer}
+              reset={reset}
+              setIsFullscreen={setIsFullscreen}
+            />
+          ) : (
+            <button
+              onClick={() => {
+                setIsFullscreen(false);
+                renderBoard(
+                  boardref,
+                  chess,
+                  playerRole,
+                  GetPieceUnicode,
+                  draggedPiece,
+                  sourceSquare,
+                  handleMove,
+                  (isFullscreen = false)
+                );
+              }}
+              className="py-3 nonfocused cursor-pointer bg-[#161B22] w-50 h-16 my-14 mr-4 rounded-sm"
+            >
+              Exit Fullscreen
+            </button>
+          ))}
       </div>
-      {game && (!playerRole && <div>You are a spectator</div>)}
+      {game && !playerRole && <div>You are a spectator</div>}
       {lostPlayer &&
         (playerRole ? (
           <GameEnd
