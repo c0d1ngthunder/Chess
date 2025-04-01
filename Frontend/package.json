@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.8",
     "chess.js": "^1.1.0",
+    "dom-to-image": "^2.6.0",
     "motion": "^12.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

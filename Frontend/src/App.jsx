@@ -313,7 +313,7 @@ const App = () => {
                   draggedPiece,
                   sourceSquare,
                   handleMove,
-                  (isFullscreen = false)
+                  false
                 );
               }}
               className="py-3 nonfocused cursor-pointer bg-[#161B22] w-50 h-16 my-14 mr-4 rounded-sm"
