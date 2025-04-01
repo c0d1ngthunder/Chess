@@ -35,9 +35,13 @@ io.on("connection", (uniquesocket) => {
     uniquesocket.emit("spectatorRole");
   }
 
-  if (players.white && players.black) {
+  if (players.white && players.black){
+    if (uniquesocket.id === players.white || uniquesocket.id === players.black) {
     io.emit("connected");
-  } else {
+  }else{
+    uniquesocket.emit("connected")
+  }
+} else {
     uniquesocket.emit("connecting");
   }
 
