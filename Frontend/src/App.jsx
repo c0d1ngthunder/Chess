@@ -331,8 +331,6 @@ const App = () => {
             reset={reset}
             playerRole={playerRole}
             setLostPlayer={setLostPlayer}
-            setHover={setHover}
-            hover={hover}
           />
         ) : (
           `${lostPlayer === "w" ? "White" : "Black"} lost by ${cause.cause}`
