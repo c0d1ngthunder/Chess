@@ -18,6 +18,8 @@ const Sidebar = ({
   exportBoard,
   lostPlayer,
   reset,
+  exporting,
+  setExporting
 }) => {
   return (
     <div
@@ -79,7 +81,7 @@ const Sidebar = ({
             Settings
           </button>
           <button
-            onClick={exportBoard}
+            onClick={()=>setExporting(true)}
             className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
           >
             <FiDownload className="text-lg inline mr-4" />
@@ -101,6 +103,23 @@ const Sidebar = ({
         </section>
       )}
       <section className="bg-[#161B22] w-[80%] rounded"></section>
+      {exporting && (
+        <aside id="exp" className="w-60 bg-[#161B22] rounded-sm p-4">
+          <h4>Export Game as:</h4>
+          <button
+            className="p-3 hover:bg-[#090C11] bg-[#0D1117] w-20 m-2 rounded-sm "
+            onClick={() => exportBoard("img")}
+          >
+            Image
+          </button>
+          <button
+            className="hover:bg-[#090C11] p-3 bg-[#0D1117] m-2 w-20 rounded-sm "
+            onClick={() => exportBoard("pgn")}
+          >
+            PGN
+          </button>
+        </aside>
+      )}
     </div>
   );
 };

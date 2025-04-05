@@ -23,13 +23,15 @@ const App = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
-
+  const [exporting, setExporting] = useState(false);
+  
   const boardref = useRef(null); // Reference to the board
 
   const reset = () => {
     setLostPlayer("");
     setCause({ isdraw: false, cause: null });
     setVisible(true);
+    chess.reset();
     socket.connect();
   };
 
@@ -87,20 +89,41 @@ const App = () => {
     return unicodes[piece.type][piece.color];
   };
 
-  function exportBoard() {
-    const board = document.getElementById("board");
+  function exportBoard(exportas) {
+    if (exportas === "img") {
+      const board = document.getElementById("board");
 
-    domtoimage
-      .toPng(board)
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = "chessboard.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch((error) => console.error("Error capturing board:", error));
+      domtoimage
+        .toPng(board)
+        .then((dataUrl) => {
+          const link = document.createElement("a");
+          link.href = dataUrl;
+          link.download = "chessboard.png";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((error) => console.error("Error capturing board:", error));
+    } else if (exportas === "pgn") {
+      chess.header(
+        "Event",
+        "Casual Game",
+        "Site",
+        "chessmasters",
+        "Date",
+        Date.now(),
+        "White",
+        "Player1",
+        "Black",
+        "Player2",
+        "Result",
+        "*"
+      );
+      navigator.clipboard.writeText(chess.pgn()).then(() => {
+        alert("Copied PGN to Clipboard!");
+      });
+    }
+    setExporting(false);
   }
 
   const handleMove = (source, target) => {
@@ -108,22 +131,6 @@ const App = () => {
       from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
-
-    chess.header(
-      "Event",
-      "Casual Game",
-      "Site",
-      "chessmasters",
-      "Date",
-      Date.now(),
-      "White",
-      "Player1",
-      "Black",
-      "Player2",
-      "Result",
-      "1-0"
-    );
-    console.log(chess.pgn());
 
     socket.emit("move", move);
   };
@@ -196,7 +203,6 @@ const App = () => {
       }
       setCause({ isdraw: false, cause: "Checkmate" });
       setLostPlayer(turn);
-      chess.reset();
     });
 
     socket.on("Resign", (color) => {
@@ -212,7 +218,6 @@ const App = () => {
       }
       setCause({ isdraw: false, cause: "Resignation" });
       setLostPlayer(color);
-      chess.reset();
     });
 
     socket.on("draw", () => {
@@ -225,7 +230,6 @@ const App = () => {
       let audio2 = new Audio("./media/game-draw.mp3");
       audio2.play();
       socket.disconnect();
-      chess.reset();
     });
 
     return () => {
@@ -245,7 +249,7 @@ const App = () => {
   return (
     <main
       className={`w-full lg:overflow-hidden ${
-        isFullscreen && "overflow-hidden" 
+        isFullscreen && "overflow-hidden"
       } min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col`}
     >
       {!isFullscreen && (
@@ -300,6 +304,8 @@ const App = () => {
               lostPlayer={lostPlayer}
               reset={reset}
               setIsFullscreen={setIsFullscreen}
+              exporting={exporting}
+              setExporting={setExporting}
             />
           ) : (
             <button
