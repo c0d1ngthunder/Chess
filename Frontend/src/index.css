@@ -64,22 +64,22 @@
   transform: rotate(180deg);
 }
 
-.history::-webkit-scrollbar {
-  height: 3px;
+.chat::-webkit-scrollbar {
+  width: 3px;
 }
 
-.history:hover::-webkit-scrollbar {
-  height: 6px;
-  transition: height 5s;
+.chat:hover::-webkit-scrollbar {
+  width: 6px;
+  transition: width 5s;
 }
 
-.history::-webkit-scrollbar-thumb {
+.chat::-webkit-scrollbar-thumb {
   background: #666;
   /* Scrollbar color */
   border-radius: 10px;
 }
 
-.history::-webkit-scrollbar-track {
+.chat::-webkit-scrollbar-track {
   background: transparent;
   /* Hide track */
 }

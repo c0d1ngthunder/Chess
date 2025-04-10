@@ -24,7 +24,10 @@ const App = () => {
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
   const [exporting, setExporting] = useState(false);
-  
+  const [activeTab, setActiveTab] = useState("chat");
+  const [messages, setMessages] = useState([]); // State to store chat messages
+  const [inputValue, setInputValue] = useState(""); // State to store input value
+
   const boardref = useRef(null); // Reference to the board
 
   const reset = () => {
@@ -33,6 +36,13 @@ const App = () => {
     setVisible(true);
     chess.reset();
     socket.connect();
+  };
+
+  const sendMessage = () => {
+    if (inputValue.trim()) {
+      socket.emit("message", { content: inputValue, playerRole: playerRole });
+    }
+    setInputValue("");
   };
 
   const renderBoardUtil = () => {
@@ -158,6 +168,10 @@ const App = () => {
       setGame(false);
     });
 
+    socket.on("message", (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
     socket.on("playerRole", (role) => {
       setPlayerRole(role);
     });
@@ -237,8 +251,12 @@ const App = () => {
       socket.off("boardState");
       socket.off("playerRole");
       socket.off("spectatorRole");
+      socket.off('message')
+      socket.off("connected");
+      socket.off("draw")
+      
     };
-  }, [playerRole]);
+  }, []);
 
   useEffect(() => {
     if (playerRole !== null) {
@@ -268,7 +286,7 @@ const App = () => {
           Play
         </button>
       )}
-      <div className="w-full relative flex flex-col items-center lg:flex-row h-full">
+      <div className="w-full relative flex flex-col lg:flex-row h-full">
         <div
           id="left"
           className={`w-full relative flex justify-center h-full ${
@@ -306,6 +324,12 @@ const App = () => {
               setIsFullscreen={setIsFullscreen}
               exporting={exporting}
               setExporting={setExporting}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              messages={messages}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              sendMessage={sendMessage}
             />
           ) : (
             <button

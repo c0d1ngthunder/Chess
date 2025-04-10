@@ -19,7 +19,13 @@ const Sidebar = ({
   lostPlayer,
   reset,
   exporting,
-  setExporting
+  setExporting,
+  activeTab,
+  setActiveTab,
+  messages,
+  inputValue,
+  setInputValue,
+  sendMessage
 }) => {
   return (
     <div
@@ -81,7 +87,7 @@ const Sidebar = ({
             Settings
           </button>
           <button
-            onClick={()=>setExporting(true)}
+            onClick={() => setExporting(true)}
             className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
           >
             <FiDownload className="text-lg inline mr-4" />
@@ -102,7 +108,42 @@ const Sidebar = ({
           </button>
         </section>
       )}
-      <section className="bg-[#161B22] w-[80%] rounded"></section>
+      <section className="bg-[#161B22] w-[70%] rounded">
+        <div className="top p-4">
+          <CiChat1 className="text-3xl" />
+        </div>
+        <div className="overflow-y-scroll bg-[#13171d] w-full h-60 flex flex-col chat">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`p-3 bg-[#161B22] w-fit inline-block m-2 rounded-lg text-sm ${
+                message.role === playerRole
+                  ? "text-blue-500 self-end"
+                  : "text-green-500"
+              }`}
+            >
+              {message.content}
+            </div>
+          ))}
+        </div>
+        <div className="px-8 p-4 bg-[#13171d] flex justify-between">
+          <input
+          value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            className="outline-none border-1 rounded p-2 w-[75%] border-[#8d8d8d]"
+            type="text"
+            placeholder="Type a message"
+          />
+          <button
+            onClick={() => sendMessage()}
+            className="px-4 p-2 bg-[#0d9488] rounded-md"
+          >
+            Send
+          </button>
+        </div>
+      </section>
+
       {exporting && (
         <aside id="exp" className="w-60 bg-[#161B22] rounded-sm p-4">
           <h4>Export Game as:</h4>
