@@ -164,7 +164,8 @@ const App = () => {
     });
 
     socket.on("message",(data)=>{
-      console.log("message received");
+      let audio = new Audio("/media/notification.mp3")
+      audio.play()
       setMessages((prev)=> [...prev,data])
     })
 
