@@ -267,6 +267,10 @@ const App = () => {
       renderBoardUtil();
     }
   }, [playerRole]);
+useEffect(() => {
+  window.addEventListener("beforeunload", function (event) {
+    event.preventDefault(); 
+})})
 
   return (
     <main
