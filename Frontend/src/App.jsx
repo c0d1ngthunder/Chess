@@ -251,6 +251,14 @@ const App = () => {
       socket.off("boardState");
       socket.off("playerRole");
       socket.off("spectatorRole");
+      socket.off("message");
+      socket.off("connected");
+      socket.off("invalidMove");
+      socket.off("check");
+      socket.off("checkmate");
+      socket.off("Resign");
+      socket.off("draw");
+      socket.off("connecting");
     };
   }, [playerRole]);
 
