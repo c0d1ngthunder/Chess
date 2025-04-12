@@ -28,7 +28,7 @@ const Sidebar = ({
   return (
     <div
       id="right"
-      className="flex self-start overflow-y-auto max-h-[85vh] gap-4 flex-col lg:w-full items-center right sm:w-[70%] w-full p-5"
+      className="flex scroll self-start overflow-y-auto max-h-[85vh] gap-4 flex-col items-center right sm:w-[100%] w-full p-5"
     >
       <section className="bg-[#161B22] w-[70%] p-4 rounded">
         <div className="grid gap-4 grid-cols-2">
@@ -112,7 +112,7 @@ const Sidebar = ({
         <div className="p-4">
           <CiChat1 className="text-3xl" />
         </div>
-        <div className="overflow-y-scroll chat bg-[#13171d] w-full h-60 flex flex-col">
+        <div className="overflow-y-scroll scroll bg-[#13171d] w-full h-60 flex flex-col">
           {messages
             ? messages.map((message, index) => (
                 <div
