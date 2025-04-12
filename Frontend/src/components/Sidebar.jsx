@@ -19,12 +19,16 @@ const Sidebar = ({
   lostPlayer,
   reset,
   exporting,
-  setExporting
+  setExporting,
+  messages,
+  setInputValue,
+  inputValue,
+  sendMessage,
 }) => {
   return (
     <div
       id="right"
-      className="flex gap-4 flex-col lg:w-full items-center right sm:w-[70%] w-full p-5"
+      className="flex self-start overflow-y-auto max-h-[85vh] gap-4 flex-col lg:w-full items-center right sm:w-[70%] w-full p-5"
     >
       <section className="bg-[#161B22] w-[70%] p-4 rounded">
         <div className="grid gap-4 grid-cols-2">
@@ -55,6 +59,7 @@ const Sidebar = ({
           <div></div>
         </div>
       </section>
+
       {playerRole && (
         <section className="bg-[#161B22] text-sm w-[70%] flex flex-wrap gap-4 p-4 rounded">
           <button
@@ -81,7 +86,7 @@ const Sidebar = ({
             Settings
           </button>
           <button
-            onClick={()=>setExporting(true)}
+            onClick={() => setExporting(true)}
             className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm"
           >
             <FiDownload className="text-lg inline mr-4" />
@@ -102,7 +107,39 @@ const Sidebar = ({
           </button>
         </section>
       )}
-      <section className="bg-[#161B22] w-[80%] rounded"></section>
+
+      <section className="bg-[#161B22] w-[70%] rounded">
+        <div className="p-4">
+          <CiChat1 className="text-3xl" />
+        </div>
+        <div className="overflow-y-scroll chat bg-[#13171d] w-full h-60 flex flex-col">
+          {messages
+            ? messages.map((message, index) => (
+                <div
+                  className={`p-3 bg-[#161B22] w-fit inline-block m-2 rounded-lg text-sm ${
+                    message.role === playerRole
+                      ? "text-blue-500 self-end"
+                      : "text-green-500"
+                  }`}
+                  key={index}
+                >
+                  {message.content}
+                </div>
+              ))
+            : "no messages yet"}
+        </div>
+        <div className="px-8 p-4 bg-[#13171D] flex justify-between">
+          <input
+            type="text"
+            placeholder="Type a message"
+            className="outline-none border-1 rounded p-2 w-[75%] border-[#8d8d8d]"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
+          <button onClick={()=>sendMessage()} className="px-4 p-2 bg-[#0D9488] rounded-md ">Send</button>
+        </div>
+      </section>
       {exporting && (
         <aside id="exp" className="w-60 bg-[#161B22] rounded-sm p-4">
           <h4>Export Game as:</h4>

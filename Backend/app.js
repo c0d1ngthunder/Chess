@@ -83,6 +83,10 @@ io.on("connection", (uniquesocket) => {
     }
   });
 
+  uniquesocket.on("message",(data)=>{
+    io.emit("message",data)
+  })
+
   uniquesocket.on("move", (move) => {
     if (players.white && players.black) {
       try {

@@ -24,15 +24,24 @@ const App = () => {
   const [history, setHistory] = useState([]);
   const [isLocked, setIsLocked] = useState(false);
   const [exporting, setExporting] = useState(false);
-  
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const boardref = useRef(null); // Reference to the board
 
   const reset = () => {
+    setMessages([]);
     setLostPlayer("");
     setCause({ isdraw: false, cause: null });
     setVisible(true);
     chess.reset();
     socket.connect();
+  };
+
+  const sendMessage = () => {
+    if (inputValue.trim()) {
+      socket.emit("message", { content: inputValue, role: playerRole });
+    }
+    setInputValue("")
   };
 
   const renderBoardUtil = () => {
@@ -154,6 +163,11 @@ const App = () => {
       audio1.play();
     });
 
+    socket.on("message",(data)=>{
+      console.log("message received");
+      setMessages((prev)=> [...prev,data])
+    })
+
     socket.on("connecting", () => {
       setGame(false);
     });
@@ -253,7 +267,7 @@ const App = () => {
       } min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col`}
     >
       {!isFullscreen && (
-        <div className="w-full p-4 mb-10 text-2xl font-extrabold text-[#2DD4AF]">
+        <div className="w-full p-4 bg-transparent text-2xl font-extrabold text-[#2DD4AF]">
           Chess
         </div>
       )}
@@ -306,6 +320,10 @@ const App = () => {
               setIsFullscreen={setIsFullscreen}
               exporting={exporting}
               setExporting={setExporting}
+              messages={messages}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              sendMessage={sendMessage}
             />
           ) : (
             <button
