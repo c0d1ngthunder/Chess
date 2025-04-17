@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { chessContext } from "../context/Context";
 import {
   IoShareSocialOutline,
   IoFlagOutline,
@@ -9,22 +10,25 @@ import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
 
-const Sidebar = ({
-  setIsFullscreen,
-  history,
-  chess,
-  playerRole,
-  resign,
-  exportBoard,
-  lostPlayer,
-  reset,
-  exporting,
-  setExporting,
-  messages,
-  setInputValue,
-  inputValue,
-  sendMessage,
-}) => {
+const Sidebar = () => {
+
+  const {
+    setIsFullscreen,
+    history,
+    chess,
+    playerRole,
+    resign,
+    exportBoard,
+    lostPlayer,
+    reset,
+    exporting,
+    setExporting,
+    messages,
+    setInputValue,
+    inputValue,
+    sendMessage,
+  } = useContext(chessContext)
+
   return (
     <div
       id="right"
@@ -113,7 +117,7 @@ const Sidebar = ({
           <CiChat1 className="text-3xl" />
         </div>
         <div className="overflow-y-scroll scroll bg-[#13171d] w-full h-60 flex flex-col">
-          {messages
+          {messages.length > 0
             ? messages.map((message, index) => (
                 <div
                   className={`p-3 bg-[#161B22] w-fit inline-block m-2 rounded-lg text-sm ${
@@ -126,7 +130,7 @@ const Sidebar = ({
                   {message.content}
                 </div>
               ))
-            : "no messages yet"}
+            : <div className="text-center my-auto">No messages yet</div>}
         </div>
         <div className="px-8 p-4 bg-[#13171D] flex justify-between">
           <input

@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { IoMdClose, IoMdRefresh, IoMdTrophy, IoMdFlag, IoMdTime } from "react-icons/io";
+import { chessContext } from "../context/Context";
 
-const GameEnd = ({ setLostPlayer, lostPlayer, playerRole, cause, reset }) => {
+const GameEnd = () => {
+
+  const { setLostPlayer, lostPlayer, playerRole, cause, reset } = useContext(chessContext);
+
   // Determine the result type icon
   const ResultIcon = () => {
     if (cause.isdraw) {
