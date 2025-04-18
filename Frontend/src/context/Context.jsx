@@ -3,6 +3,7 @@ import { Chess } from "chess.js"; // Import chess.js
 import domtoimage from "dom-to-image";
 import { socket } from "../socket";
 import renderBoard from "../renderBoard";
+import { act } from "react";
 
 export const chessContext = createContext();
 const Context = (props) => {
@@ -20,6 +21,7 @@ const Context = (props) => {
   const [exporting, setExporting] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [activeTab,setActiveTab] = useState("moves"); // State to manage the active tab
   const chess = useRef(new Chess()).current; // State to store the chess game
   const boardref = useRef(null); // Reference to the board
 
@@ -185,7 +187,9 @@ const Context = (props) => {
         sendMessage,
         reset,
         draggedPiece,
-        sourceSquare
+        sourceSquare,
+        activeTab,
+        setActiveTab
       }}
     >
       {props.children}

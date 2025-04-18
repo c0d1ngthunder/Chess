@@ -9,9 +9,9 @@ import { MdFullscreen } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
+import { RiTerminalLine } from "react-icons/ri";
 
 const Sidebar = () => {
-
   const {
     setIsFullscreen,
     history,
@@ -27,7 +27,9 @@ const Sidebar = () => {
     setInputValue,
     inputValue,
     sendMessage,
-  } = useContext(chessContext)
+    activeTab,
+    setActiveTab,
+  } = useContext(chessContext);
 
   return (
     <div
@@ -112,37 +114,96 @@ const Sidebar = () => {
         </section>
       )}
 
-      <section className="bg-[#161B22] w-[70%] rounded">
-        <div className="p-4">
-          <CiChat1 className="text-3xl" />
+      <section className="w-[70%] rounded">
+        <div className="p-4 select-none cursor-pointer flex gap-10 bg-[#13181d]">
+          <div
+            onClick={() => {
+              setActiveTab("chat");
+            }}
+            className={`  px-2 p-1 ${
+              activeTab === "chat" && "bg-[#181d24] rounded "
+            }`}
+          >
+            <CiChat1 className="inline text-3xl" />
+            <span className="px-2">Chat</span>
+          </div>
+          {console.log("activeTab is:", activeTab)}
+          <div
+            onClick={() => {
+              setActiveTab("moves");
+            }}
+            className={`  px-2 p-1 ${
+              activeTab === "moves" && "bg-[#161B22] rounded"
+            }`}
+          >
+            <RiTerminalLine className="inline text-3xl" />
+            <span className="px-2">Moves</span>
+          </div>
         </div>
-        <div className="overflow-y-scroll scroll bg-[#13171d] w-full h-60 flex flex-col">
-          {messages.length > 0
-            ? messages.map((message, index) => (
-                <div
-                  className={`p-3 bg-[#161B22] w-fit inline-block m-2 rounded-lg text-sm ${
-                    message.role === playerRole
-                      ? "text-blue-500 self-end"
-                      : "text-green-500"
-                  }`}
-                  key={index}
-                >
-                  {message.content}
-                </div>
-              ))
-            : <div className="text-center my-auto">No messages yet</div>}
-        </div>
-        <div className="px-8 p-4 bg-[#13171D] flex justify-between">
-          <input
-            type="text"
-            placeholder="Type a message"
-            className="outline-none border-1 rounded p-2 w-[75%] border-[#8d8d8d]"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <button onClick={()=>sendMessage()} className="px-4 p-2 bg-[#0D9488] rounded-md ">Send</button>
-        </div>
+        {activeTab === "chat" ? (
+          <div>
+            <div className="overflow-y-scroll scroll bg-[#161B22] w-full h-60 flex flex-col">
+              {messages.length > 0 ? (
+                messages.map((message, index) => (
+                  <div
+                    className={`p-3 bg-[#161B22] w-fit inline-block m-2 rounded-lg text-sm ${
+                      message.role === playerRole
+                        ? "text-blue-500 self-end"
+                        : "text-green-500"
+                    }`}
+                    key={index}
+                  >
+                    {message.content}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center my-auto">No messages yet</div>
+              )}
+            </div>
+            <div className="px-8 p-4 bg-[#13171D] flex justify-between">
+              <input
+                type="text"
+                placeholder="Type a message"
+                className="outline-none border-1 rounded p-2 w-[75%] border-[#8d8d8d]"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              />
+              <button
+                onClick={() => sendMessage()}
+                className="px-4 p-2 bg-[#0D9488] rounded-md "
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="overflow-y-scroll bg-[#161B22] p-4 scroll w-full h-60 flex flex-col">
+              <div className="text-[#2DD4AF] font-bold ">Move History</div>
+              <div className="grid grid-cols-[1fr_1fr_1fr] justify-between text-md text-[#acb3bf] p-2 w-[80%] ">
+                <span>#</span>
+                <span>White</span>
+                <span>Black</span>
+              </div>
+              {history.length > 0 ? (
+                [...Array(Math.ceil(history.length / 2))].map((_, i) => {
+                  const whiteMove = history[i * 2];
+                  const blackMove = history[i * 2 + 1];
+                  return (
+                    <div key={i} className="grid grid-cols-[1fr_1fr_1fr] justify-between w-[80%] gap-4 p-2">
+                      <span>{i + 1}.</span>
+                      <span>{whiteMove}</span>
+                      <span>{blackMove}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center my-auto">No moves yet</div>
+              )}
+            </div>
+          </div>
+        )}
       </section>
       {exporting && (
         <aside id="exp" className="w-60 bg-[#161B22] rounded-sm p-4">
