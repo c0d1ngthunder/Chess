@@ -1,45 +1,24 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { socket } from "./socket"; // Import socket.io-client
-import renderBoard from "./renderBoard";
 import GameEnd from "./components/GameEnd";
-import Sidebar from "./components/Sidebar";
 import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
-import { CiLock, CiUnlock } from "react-icons/ci";
 import { chessContext } from "./context/Context";
+import Routing from "./utils/Routing";
 
 const App = () => {
   const {
     playerRole,
     setPlayerRole,
-    lostPlayer,
     setLostPlayer,
-    cause,
     setCause,
-    visible,
     changevisible,
-    showBtn,
-    setShowBtn,
-    game,
     setGame,
     isFullscreen,
-    setIsFullscreen,
     setHistory,
-    isLocked,
     setMessages,
-    connectToServer,
     chess,
-    boardref,
     renderBoardUtil,
-    toggleLock,
-    handleMove,
-    GetPieceUnicode,
-    resign,
-    exportBoard,
-    sendMessage,
-    reset,
-    draggedPiece,
-    sourceSquare
   } = useContext(chessContext); // Context to manage state
 
   useEffect(() => {
@@ -161,11 +140,6 @@ const App = () => {
       renderBoardUtil();
     }
   }, [playerRole]);
-  useEffect(() => {
-    window.addEventListener("beforeunload", function (event) {
-      event.preventDefault();
-    });
-  });
 
   return (
     <main
@@ -178,86 +152,8 @@ const App = () => {
           Chess
         </div>
       )}
-      {showBtn && (
-        <button
-          onClick={() => {
-            connectToServer();
-            setShowBtn(false);
-          }}
-          className={`text-md play cursor-pointer p-4 px-8 bg-transparent transition duration-200 ease border-1 absolute -translate-x-[50%] z-10 -translate-y-[50%] top-[50%] left-[50%]`}
-        >
-          Play
-        </button>
-      )}
-      <div className="w-full relative flex flex-col items-center lg:flex-row h-full">
-        <div
-          id="left"
-          className={`w-full relative flex justify-center h-full ${
-            isFullscreen && "h-screen"
-          } items-center `}
-        >
-          {!showBtn && (
-            <div
-              ref={boardref}
-              id="board"
-              className={`board ${
-                playerRole === "b" && "flipped"
-              } shadow-[0_0_15px_rgba(20,184,166,0.2)] transition-all ease-in-out duration-500 ${
-                isFullscreen && "scale-125"
-              } relative sm:h-100 grid sm:w-100 h-80 w-80`}
-            ></div>
-          )}
-          <button
-            onClick={() => toggleLock()}
-            className="top-0 text-xl absolute right-0 sm:right-20 lg:opacity-0"
-          >
-            {isLocked ? <CiUnlock /> : <CiLock />}
-          </button>
-        </div>
-        {game &&
-          (!isFullscreen ? (
-            <Sidebar
-              exportBoard={exportBoard}
-              resign={resign}
-              chess={chess}
-              reset={reset}
-              sendMessage={sendMessage}
-            />
-          ) : (
-            <button
-              onClick={() => {
-                setIsFullscreen(false);
-                renderBoard(
-                  boardref,
-                  chess,
-                  playerRole,
-                  GetPieceUnicode,
-                  draggedPiece,
-                  sourceSquare,
-                  handleMove,
-                  false
-                );
-              }}
-              className="py-3 nonfocused cursor-pointer bg-[#161B22] w-50 h-16 my-14 mr-4 rounded-sm"
-            >
-              Exit Fullscreen
-            </button>
-          ))}
-      </div>
-      {game && !playerRole && <div>You are a spectator</div>}
-      {lostPlayer &&
-        (playerRole ? (
-          <GameEnd
-            lostPlayer={lostPlayer}
-            cause={cause}
-            reset={reset}
-            playerRole={playerRole}
-            setLostPlayer={setLostPlayer}
-          />
-        ) : (
-          `${lostPlayer === "w" ? "White" : "Black"} lost by ${cause.cause}`
-        ))}
-      {!showBtn && (game ? visible && <Connected /> : <Waiting />)}
+
+      <Routing />
     </main>
   );
 };
