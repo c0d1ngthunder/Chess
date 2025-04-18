@@ -181,7 +181,7 @@ const Sidebar = () => {
           <div>
             <div className="overflow-y-scroll bg-[#161B22] p-4 scroll w-full h-60 flex flex-col">
               <div className="text-[#2DD4AF] font-bold ">Move History</div>
-              <div className="grid grid-cols-[1fr_1fr_1fr] justify-between text-md text-[#acb3bf] p-2 w-[80%] ">
+              <div className="grid grid-cols-[1fr_1fr_1fr] border-b-1 border-[gray] justify-between text-md text-[#acb3bf] p-2 w-[80%] ">
                 <span>#</span>
                 <span>White</span>
                 <span>Black</span>

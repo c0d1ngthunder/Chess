@@ -28,6 +28,7 @@ const Game = () => {
     visible,
     resign,
     sendMessage,
+    connectToServer,
   } = useContext(chessContext);
 
   useEffect(() => {
@@ -39,6 +40,10 @@ const Game = () => {
       }
     }
   });
+
+  useEffect(()=>{
+    connectToServer()
+  },[])
 
   return (
     <div className="w-full relative flex flex-col items-center lg:flex-row min-h-[90%] h-full">
