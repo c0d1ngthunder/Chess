@@ -1,8 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { socket } from "./socket"; // Import socket.io-client
-import GameEnd from "./components/GameEnd";
-import Connected from "./components/Connected";
-import Waiting from "./components/Waiting";
 import { chessContext } from "./context/Context";
 import Routing from "./utils/Routing";
 import Navbar from "./components/Navbar";

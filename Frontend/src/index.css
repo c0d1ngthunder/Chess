@@ -235,3 +235,12 @@ body.scroll::-webkit-scrollbar-track{
 #exp {
   animation: blink .2s ease-out 2;
 }
+
+ul{
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+li::marker{
+  color: #14b8a6;
+}
