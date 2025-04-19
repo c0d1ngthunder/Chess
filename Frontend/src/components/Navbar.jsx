@@ -1,22 +1,18 @@
-import React from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
+import React, { useContext } from "react";
+import { chessContext } from "../context/Context";
 
 const Navbar = () => {
+  const {isFullscreen} = useContext(chessContext);
+
   return (
     <>
-    <nav className='text-white rounded container flex gap-8 bg-[#111111] w-full p-4 mt-0 mb-10'>
-        <Link className='text-[#2DD4AF] text-xl font-bold' to={"/"}>Chess</Link>
-        <Link to={"/play"}>Play</Link>
-        <Link to={"/rules"}>Rules</Link>
-    </nav>
-
-    {/* <Routes>
-<Route path="/" element={<Home />} />
-<Route path="/play" element={<Play />} />
-<Route path="/rules" element={<Rules />} />
-    </Routes> */}
+      {!isFullscreen && (
+        <nav className="w-full mb-8 border-[#20272C] border-b-2 p-3 bg-[#161B22] text-2xl font-extrabold text-[#2DD4AF]">
+          Chess
+        </nav>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

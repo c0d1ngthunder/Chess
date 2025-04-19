@@ -5,6 +5,7 @@ import Connected from "./components/Connected";
 import Waiting from "./components/Waiting";
 import { chessContext } from "./context/Context";
 import Routing from "./utils/Routing";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   const {
@@ -147,11 +148,7 @@ const App = () => {
         isFullscreen && "overflow-hidden"
       } min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col`}
     >
-      {!isFullscreen && (
-        <div className="w-full p-4 bg-transparent text-2xl font-extrabold text-[#2DD4AF]">
-          Chess
-        </div>
-      )}
+      <Navbar />
 
       <Routing />
     </main>

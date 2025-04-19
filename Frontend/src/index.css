@@ -65,11 +65,11 @@
 }
 
 .scroll::-webkit-scrollbar {
-  width: 3px;
+  width: 6px;
 }
 
-.scroll:hover::-webkit-scrollbar {
-  width: 6px;
+.scroll:hover::-webkit-scrollbar-thumb {
+  background-color: #555;
   transition: width 5s;
 }
 

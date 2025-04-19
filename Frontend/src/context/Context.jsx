@@ -147,6 +147,10 @@ const Context = (props) => {
     setVisible(false);
   };
 
+  const disconnect = ()=>{
+    socket.disconnect()
+  }
+
   return (
     <chessContext.Provider
       value={{
@@ -189,7 +193,8 @@ const Context = (props) => {
         draggedPiece,
         sourceSquare,
         activeTab,
-        setActiveTab
+        setActiveTab,
+        disconnect
       }}
     >
       {props.children}

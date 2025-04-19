@@ -9,6 +9,7 @@ import GameEnd from "./GameEnd";
 
 const Game = () => {
   const {
+    disconnect,
     cause,
     isFullscreen,
     boardref,
@@ -43,6 +44,9 @@ const Game = () => {
 
   useEffect(()=>{
     connectToServer()
+    return ()=>{
+      disconnect()
+    }
   },[])
 
   return (
