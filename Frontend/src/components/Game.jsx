@@ -30,6 +30,8 @@ const Game = () => {
     resign,
     sendMessage,
     connectToServer,
+    connected,
+    setConnected
   } = useContext(chessContext);
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const Game = () => {
           {isLocked ? <CiUnlock /> : <CiLock />}
         </button>
       </div>
-      {game &&
+      {(connected || lostPlayer ) &&
         (!isFullscreen ? (
           <Sidebar
             exportBoard={exportBoard}
@@ -110,7 +112,7 @@ const Game = () => {
           `${lostPlayer === "w" ? "White" : "Black"} lost by ${cause.cause}`
         ))}
 
-      {game ? visible && <Connected /> : <Waiting />}
+      {!lostPlayer &&(connected ? visible && <Connected /> : <Waiting />)}
     </div>
   );
 };

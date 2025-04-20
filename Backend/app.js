@@ -65,6 +65,14 @@ io.on("connection", (uniquesocket) => {
     }
   });
 
+uniquesocket.on("draw",()=>{
+  delete players.white;
+  delete players.black;
+  chess.reset();
+  io.emit("draw","Agreement");
+  io.emit("connecting");
+})
+
   uniquesocket.on("resign", (player) => {
     if (player === "w") {
       delete players.white;
@@ -86,6 +94,10 @@ io.on("connection", (uniquesocket) => {
   uniquesocket.on("message",(data)=>{
     io.emit("message",data)
   })
+
+uniquesocket.on("reqdraw",(player)=>{
+  uniquesocket.broadcast.emit("reqdraw",player)
+})
 
   uniquesocket.on("move", (move) => {
     if (players.white && players.black) {

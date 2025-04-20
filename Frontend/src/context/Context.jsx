@@ -13,7 +13,7 @@ const Context = (props) => {
   const [lostPlayer, setLostPlayer] = useState(null);
   const [cause, setCause] = useState({ isdraw: false, cause: null });
   const [visible, setVisible] = useState(true);
-  const [showBtn, setShowBtn] = useState(true);
+  const [showDraw, setShowDraw] = useState();
   const [game, setGame] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [history, setHistory] = useState([]);
@@ -21,9 +21,10 @@ const Context = (props) => {
   const [exporting, setExporting] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [activeTab,setActiveTab] = useState("moves"); // State to manage the active tab
+  const [activeTab, setActiveTab] = useState("moves"); // State to manage the active tab
   const chess = useRef(new Chess()).current; // State to store the chess game
   const boardref = useRef(null); // Reference to the board
+  const [connected, setConnected] = useState(false); // State to manage connection status
 
   const reset = () => {
     setMessages([]);
@@ -31,7 +32,22 @@ const Context = (props) => {
     setCause({ isdraw: false, cause: null });
     setVisible(true);
     chess.reset();
+    renderBoard(
+      boardref,
+      chess,
+      playerRole,
+      GetPieceUnicode,
+      draggedPiece,
+      sourceSquare,
+      handleMove,
+      isFullscreen
+    );
     socket.connect();
+  };
+
+  const drawaccept = () => {
+    setShowDraw(false);
+    socket.emit("draw");
   };
 
   const sendMessage = () => {
@@ -147,9 +163,13 @@ const Context = (props) => {
     setVisible(false);
   };
 
-  const disconnect = ()=>{
-    socket.disconnect()
-  }
+  const disconnect = () => {
+    socket.disconnect();
+  };
+  const requestDraw = () => {
+    setShowDraw(playerRole);
+    socket.emit("reqdraw", playerRole);
+  };
 
   return (
     <chessContext.Provider
@@ -162,8 +182,8 @@ const Context = (props) => {
         setCause,
         visible,
         setVisible,
-        showBtn,
-        setShowBtn,
+        showDraw,
+        setShowDraw,
         game,
         setGame,
         isFullscreen,
@@ -194,7 +214,13 @@ const Context = (props) => {
         sourceSquare,
         activeTab,
         setActiveTab,
-        disconnect
+        disconnect,
+        requestDraw,
+        showDraw,
+        setShowDraw,
+        drawaccept,
+        connected,
+        setConnected,
       }}
     >
       {props.children}

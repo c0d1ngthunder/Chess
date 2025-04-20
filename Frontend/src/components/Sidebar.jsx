@@ -10,9 +10,12 @@ import { FiDownload } from "react-icons/fi";
 import { VscDebugRestart } from "react-icons/vsc";
 import { CiChat1 } from "react-icons/ci";
 import { RiTerminalLine } from "react-icons/ri";
+import { FaHandshake } from "react-icons/fa";
+import Draw from "./Draw";
 
 const Sidebar = () => {
   const {
+    requestDraw,
     setIsFullscreen,
     history,
     chess,
@@ -87,9 +90,9 @@ const Sidebar = () => {
             <IoFlagOutline className="inline mr-4 text-lg" />{" "}
             <span>Resign</span>
           </button>
-          <button className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm">
-            <IoSettingsOutline className="inline text-lg mr-4" />
-            Settings
+          <button onClick={()=>{requestDraw()}} className="py-3 nonfocused cursor-pointer bg-[#0D1117] sm:w-30 w-full rounded-sm">
+            <FaHandshake className="inline text-lg mr-4" />
+            Draw
           </button>
           <button
             onClick={() => setExporting(true)}
@@ -127,7 +130,6 @@ const Sidebar = () => {
             <CiChat1 className="inline text-3xl" />
             <span className="px-2">Chat</span>
           </div>
-          {console.log("activeTab is:", activeTab)}
           <div
             onClick={() => {
               setActiveTab("moves");
@@ -222,6 +224,7 @@ const Sidebar = () => {
           </button>
         </aside>
       )}
+      <Draw />
     </div>
   );
 };

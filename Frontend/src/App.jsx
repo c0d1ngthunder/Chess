@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 
 const App = () => {
   const {
+    showDraw,
+    setShowDraw,
     playerRole,
     setPlayerRole,
     setLostPlayer,
@@ -17,11 +19,14 @@ const App = () => {
     setMessages,
     chess,
     renderBoardUtil,
+    connected,
+    setConnected,
   } = useContext(chessContext); // Context to manage state
 
   useEffect(() => {
     socket.on("connected", () => {
       setGame(true);
+      setConnected(true);
       let audio1 = new Audio("./media/game-start.mp3");
       audio1.play();
       renderBoardUtil();
@@ -40,11 +45,16 @@ const App = () => {
     });
 
     socket.on("connecting", () => {
+      setConnected(false);
       setGame(false);
     });
 
     socket.on("playerRole", (role) => {
       setPlayerRole(role);
+    });
+
+    socket.on("reqdraw", (role) => {
+      setShowDraw(role);
     });
 
     socket.on("spectatorRole", (role) => {
@@ -88,6 +98,7 @@ const App = () => {
       }
       setCause({ isdraw: false, cause: "Checkmate" });
       setLostPlayer(turn);
+      setGame(false);
     });
 
     socket.on("Resign", (color) => {
@@ -103,18 +114,20 @@ const App = () => {
       }
       setCause({ isdraw: false, cause: "Resignation" });
       setLostPlayer(color);
+      setGame(false)
     });
 
-    socket.on("draw", () => {
-      setCause({ isdraw: true, cause: "" });
-      setLostPlayer("Both");
-      chess.move(move);
-      chess.load(fen);
+    socket.on("draw", (reason) => {
       let audio1 = new Audio("./media/game-end.mp3");
       audio1.play();
       let audio2 = new Audio("./media/game-draw.mp3");
       audio2.play();
+      setCause({ isdraw: true, cause: reason });
+      setLostPlayer("Both");
+      chess.move(move);
+      chess.load(fen);
       socket.disconnect();
+      setGame(false);
     });
 
     return () => {
