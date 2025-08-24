@@ -1,10 +1,7 @@
-import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { FaPlay } from "react-icons/fa";
-import { chessContext } from "../context/Context";
 
 const Home = () => {
-  const { connectToServer } = useContext(chessContext);
   return (
     <div className="w-full md:flex-row flex flex-col h-full">
       <div className="left md:w-[50%] w-[100%] p-4 ">

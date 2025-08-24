@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { chessContext } from "../context/Context";
 import {
   IoShareSocialOutline,
   IoFlagOutline,
-  IoSettingsOutline,
 } from "react-icons/io5";
 import { MdFullscreen } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";

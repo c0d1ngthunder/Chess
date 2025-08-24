@@ -1,5 +1,3 @@
-import React from "react";
-
 const Connected = () => {
   return (
     <div className="fixed bottom-6 right-28 md:w-auto md:bottom-auto md:top-[90%] md:-translate-y-1/2 bg-[#0d1117] border border-[#30363d] shadow-[0_0_15px_rgba(20,184,166,0.15)] p-4 z-50 font-mono">

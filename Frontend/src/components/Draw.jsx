@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { chessContext } from "../context/Context";
 import { IoWarningOutline } from "react-icons/io5";
 

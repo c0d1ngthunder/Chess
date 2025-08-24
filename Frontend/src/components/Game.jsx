@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import  { useContext, useEffect } from "react";
 import { chessContext } from "../context/Context";
 import { CiLock, CiUnlock } from "react-icons/ci";
 import Sidebar from "./Sidebar";
@@ -31,7 +31,6 @@ const Game = () => {
     sendMessage,
     connectToServer,
     connected,
-    setConnected
   } = useContext(chessContext);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { IoMdClose, IoMdRefresh, IoMdTrophy, IoMdFlag, IoMdTime } from "react-icons/io";
 import { chessContext } from "../context/Context";
 
