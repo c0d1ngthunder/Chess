@@ -216,8 +216,6 @@ const Context = (props) => {
         setActiveTab,
         disconnect,
         requestDraw,
-        showDraw,
-        setShowDraw,
         drawaccept,
         connected,
         setConnected,
