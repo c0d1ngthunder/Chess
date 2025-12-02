@@ -1,9 +1,8 @@
-import React, { createContext, useState, useRef } from "react";
+import { createContext, useState, useRef } from "react";
 import { Chess } from "chess.js"; // Import chess.js
 import domtoimage from "dom-to-image";
 import { socket } from "../socket";
 import renderBoard from "../renderBoard";
-import { act } from "react";
 
 export const chessContext = createContext();
 const Context = (props) => {
@@ -216,8 +215,6 @@ const Context = (props) => {
         setActiveTab,
         disconnect,
         requestDraw,
-        showDraw,
-        setShowDraw,
         drawaccept,
         connected,
         setConnected,

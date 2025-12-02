@@ -84,10 +84,11 @@ const GameEnd = () => {
                 {cause.isdraw ? "DRAW" : (lostPlayer === playerRole ? "DEFEAT" : "VICTORY")}
               </span>
             </div>
+            {!cause.isdraw &&
             <div className="flex flex-col">
               <span className="text-gray-400">METHOD:</span>
               <span className="text-white">{cause.isdraw ? "STALEMATE" : cause.cause.toUpperCase()}</span>
-            </div>
+            </div>}
             <div className="flex flex-col">
               <span className="text-gray-400">STATUS:</span>
               <span className="text-teal-400">READY_FOR_REMATCH</span>

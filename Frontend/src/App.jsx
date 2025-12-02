@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect} from "react";
 import { socket } from "./socket"; // Import socket.io-client
 import { chessContext } from "./context/Context";
 import Routing from "./utils/Routing";
@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 
 const App = () => {
   const {
-    showDraw,
     setShowDraw,
     playerRole,
     setPlayerRole,
@@ -19,7 +18,6 @@ const App = () => {
     setMessages,
     chess,
     renderBoardUtil,
-    connected,
     setConnected,
   } = useContext(chessContext); // Context to manage state
 
@@ -73,11 +71,11 @@ const App = () => {
         if (move1.isCapture()) {
           let audio1 = new Audio("./media/capture.mp3");
           audio1.play();
-        } else {
+        }else {
           let audio1 = new Audio("./media/move-opponent.mp3");
           audio1.play();
         }
-      } catch {}
+      } catch {console.log()}
     });
 
     socket.on("check", () => {
@@ -114,7 +112,7 @@ const App = () => {
       }
       setCause({ isdraw: false, cause: "Resignation" });
       setLostPlayer(color);
-      setGame(false)
+      setGame(false);
     });
 
     socket.on("draw", (reason) => {
@@ -124,8 +122,6 @@ const App = () => {
       audio2.play();
       setCause({ isdraw: true, cause: reason });
       setLostPlayer("Both");
-      chess.move(move);
-      chess.load(fen);
       socket.disconnect();
       setGame(false);
     });
@@ -144,17 +140,17 @@ const App = () => {
       socket.off("draw");
       socket.off("connecting");
     };
-  }, [playerRole]);
+  });
 
   useEffect(() => {
     if (playerRole !== null) {
       renderBoardUtil();
     }
-  }, [playerRole]);
+  }, [playerRole,renderBoardUtil]);
 
   return (
     <main
-      className={`w-full lg:overflow-hidden ${
+      className={`w-full lg:ov.eslintreacterflow-hidden ${
         isFullscreen && "overflow-hidden"
       } min-h-screen m-auto items-center text-white h-full bg-[#0D1117] flex flex-col`}
     >
