@@ -1,4 +1,4 @@
-import { useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 import { socket } from "./socket"; // Import socket.io-client
 import { chessContext } from "./context/Context";
 import Routing from "./utils/Routing";
@@ -66,16 +66,14 @@ const App = () => {
     });
 
     socket.on("move", (move) => {
-      try {
-        let move1 = chess.move(move);
-        if (move1.isCapture()) {
-          let audio1 = new Audio("./media/capture.mp3");
-          audio1.play();
-        }else {
-          let audio1 = new Audio("./media/move-opponent.mp3");
-          audio1.play();
-        }
-      } catch {console.log()}
+      let move1 = chess.move(move);
+      if (move1.isCapture()) {
+        let audio1 = new Audio("./media/capture.mp3");
+        audio1.play();
+      } else {
+        let audio1 = new Audio("./media/move-opponent.mp3");
+        audio1.play();
+      }
     });
 
     socket.on("check", () => {
@@ -146,7 +144,7 @@ const App = () => {
     if (playerRole !== null) {
       renderBoardUtil();
     }
-  }, [playerRole,renderBoardUtil]);
+  }, [playerRole, renderBoardUtil]);
 
   return (
     <main

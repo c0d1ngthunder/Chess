@@ -35,13 +35,16 @@ io.on("connection", (uniquesocket) => {
     uniquesocket.emit("spectatorRole");
   }
 
-  if (players.white && players.black){
-    if (uniquesocket.id === players.white || uniquesocket.id === players.black) {
-    io.emit("connected");
-  }else{
-    uniquesocket.emit("connected")
-  }
-} else {
+  if (players.white && players.black) {
+    if (
+      uniquesocket.id === players.white ||
+      uniquesocket.id === players.black
+    ) {
+      io.emit("connected");
+    } else {
+      uniquesocket.emit("connected");
+    }
+  } else {
     uniquesocket.emit("connecting");
   }
 
@@ -65,13 +68,13 @@ io.on("connection", (uniquesocket) => {
     }
   });
 
-uniquesocket.on("draw",()=>{
-  delete players.white;
-  delete players.black;
-  chess.reset();
-  io.emit("draw","Agreement");
-  io.emit("connecting");
-})
+  uniquesocket.on("draw", () => {
+    delete players.white;
+    delete players.black;
+    chess.reset();
+    io.emit("draw", "Agreement");
+    io.emit("connecting");
+  });
 
   uniquesocket.on("resign", (player) => {
     if (player === "w") {
@@ -91,21 +94,25 @@ uniquesocket.on("draw",()=>{
     }
   });
 
-  uniquesocket.on("message",(data)=>{
-    io.emit("message",data)
-  })
+  uniquesocket.on("message", (data) => {
+    io.emit("message", data);
+  });
 
-uniquesocket.on("reqdraw",(player)=>{
-  uniquesocket.broadcast.emit("reqdraw",player)
-})
+  uniquesocket.on("reqdraw", (player) => {
+    uniquesocket.broadcast.emit("reqdraw", player);
+  });
 
   uniquesocket.on("move", (move) => {
     if (players.white && players.black) {
       try {
-        if (chess.turn() === "w" && uniquesocket.id !== players.white)
-          socket.emit("invalidMove");
-        if (chess.turn() === "b" && uniquesocket.id !== players.black) return;
-
+        if (chess.turn() === "w" && uniquesocket.id !== players.white){
+          uniquesocket.emit("invalidMove");
+        return;
+        }
+        if (chess.turn() === "b" && uniquesocket.id !== players.black) {
+          uniquesocket.emit("invalidMove");
+          return;
+        }
         let response = chess.move(move);
         if (response) {
           currentplayer = chess.turn();
@@ -114,7 +121,7 @@ uniquesocket.on("reqdraw",(player)=>{
             if (chess.isCheckmate()) {
               io.emit("move", move);
               io.emit("boardState", chess.fen(), chess.history());
-              io.emit("checkmate", chess.turn());
+              io.emit("checkmate", chess.turn()); 
             }
             if (chess.isDraw()) {
               io.emit("move", move);

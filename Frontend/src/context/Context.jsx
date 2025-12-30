@@ -13,6 +13,7 @@ const Context = (props) => {
   const [cause, setCause] = useState({ isdraw: false, cause: null });
   const [visible, setVisible] = useState(true);
   const [showDraw, setShowDraw] = useState();
+  const [pendingMove, setPendingMove] = useState(null);
   const [game, setGame] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [history, setHistory] = useState([]);
@@ -152,6 +153,16 @@ const Context = (props) => {
       from: `${String.fromCharCode(97 + source.col)}${8 - source.row}`,
       to: `${String.fromCharCode(97 + target.col)}${8 - target.row}`,
     };
+    const piece = chess.get(move.from);
+    if (piece && piece.type === "p") {
+      const isWhitePromotion = piece.color === "w" && target.row === 0;
+      const isBlackPromotion = piece.color === "b" && target.row === 7;
+
+      if (isWhitePromotion || isBlackPromotion) {
+        setPendingMove({ ...move });
+        return;
+      }
+    }
 
     socket.emit("move", move);
   };
@@ -173,6 +184,8 @@ const Context = (props) => {
   return (
     <chessContext.Provider
       value={{
+        pendingMove,
+        setPendingMove,
         playerRole,
         setPlayerRole,
         lostPlayer,
